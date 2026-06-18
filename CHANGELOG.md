@@ -1,5 +1,16 @@
 # Changelog — Roots in Blue Stone (RIBS)
 
+## 2026-06-18 — Monochrome redesign
+
+- Scraped the band's real assets from the Wix CDN (browser-based, since curl is 403'd) into `public/`: logo wordmark (`img/logo.png`), high-res stage photo (`img/hero-banner.jpg`), "One Last Breath" cover (`img/one-last-breath.png`), gallery shots (`gallery/g*.jpg`). Content now points at local files.
+- Switched to a **monochrome chrome** palette — sleek black `#060606`, near-white `#f5f5f6` primary, grayscale + metallic-chrome highlights. Dropped the blue and amber accents.
+- New fonts: **Syne** (display/headings), Geist (body), mono labels.
+- Hero: real logo as the wordmark, grayscale stage photo background, floating tilted album cover in the right column, two CTAs (See Tour Dates / Book the Band).
+- Nav: logo image; removed social icons; added Tour Dates + Book Now buttons.
+- Photography rendered grayscale (`.mono`); album cover kept in its original color as the single focal accent.
+- Copy audit: trimmed invented marketing lines; booking section now uses a verbatim bio quote; lineup blurbs removed (labels only).
+- Redeployed staging: https://staging.roots-in-blue-stone.pages.dev (verified live: monochrome palette, logo/photo/cover all load, edge API ok).
+
 ## 2026-06-18
 
 - Created `ribs` as a managed project workspace for the Roots in Blue Stone band site (client web project for AKLO).

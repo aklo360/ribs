@@ -26,9 +26,11 @@ clients submit a detailed booking inquiry. A redesign of the existing Wix site.
 - `wrangler.toml` — Cloudflare Pages target `roots-in-blue-stone`
 
 ## Deployment
-- Target: Cloudflare Pages via `npm run cf:deploy` (@cloudflare/next-on-pages). NOT yet run.
-- DNS cutover from the current Wix site is a separate, approval-gated step.
+- Cloudflare Pages project `roots-in-blue-stone`. Build via `@cloudflare/next-on-pages` (`npm run cf:build`), deploy via `wrangler pages deploy .vercel/output/static`.
+- Staging (branch `staging`): https://staging.roots-in-blue-stone.pages.dev — LIVE.
+- Production (`main` branch → roots-in-blue-stone.pages.dev) and DNS cutover from Wix: approval-gated, not yet run.
+- Pages secrets needed for real emails: `RESEND_API_KEY`, `BOOKING_TO_EMAIL`, `BOOKING_FROM_EMAIL`. Project compat: `nodejs_compat`.
 
 ## GitHub
-- Remote: none yet (local git only). When created, push as `aklo360`.
-- Default branch: `main`.
+- Remote: `git@github.com:aklo360/ribs.git` (private). Web: https://github.com/aklo360/ribs
+- Default branch: `main`. Push as `aklo360`.

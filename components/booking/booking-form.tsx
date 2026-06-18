@@ -33,6 +33,7 @@ import {
   EVENT_TYPES,
   LINEUP_OPTIONS,
   REPERTOIRE_OPTIONS,
+  SET_LENGTH_OPTIONS,
   PROVIDED_OPTIONS,
   BACKLINE_ITEMS,
   BUDGET_RANGES,
@@ -411,7 +412,7 @@ function Step2({ register, control, errors }: StepProps) {
   );
 }
 
-function Step3({ register, control }: StepProps) {
+function Step3({ control }: StepProps) {
   return (
     <>
       <Field label="Lineup size">
@@ -436,10 +437,17 @@ function Step3({ register, control }: StepProps) {
           )}
         />
       </Field>
-      <Field label="Desired set length / number of sets">
-        <Input
-          placeholder="e.g. 2 × 60-min sets, or 3 hours total"
-          {...register("setLength")}
+      <Field label="Desired set length">
+        <Controller
+          control={control}
+          name="setLength"
+          render={({ field }) => (
+            <Pills
+              options={SET_LENGTH_OPTIONS}
+              value={field.value}
+              onChange={field.onChange}
+            />
+          )}
         />
       </Field>
     </>

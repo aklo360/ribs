@@ -17,6 +17,10 @@ export const SITE = {
   genres: ["Reggae", "Rock", "Blues", "Soul"],
   homeBase: "Pennsylvania · The Poconos",
   logo: "/img/logo.png",
+  // Their booking/EPK profile on Dusk (5.0★ across 11 reviews).
+  dusk: "https://dusk.fm/@rootsinbluestone",
+  duskRating: "5.0",
+  duskReviews: 11,
 } as const;
 
 export const BIO = [
@@ -57,7 +61,7 @@ export const RELEASES: Release[] = [
     title: "One Last Breath",
     type: "Single",
     status: "Out Now",
-    cover: "/img/one-last-breath.png",
+    cover: "/img/one-last-breath.jpg",
     listenUrl: "https://artists.landr.com/057914992419",
     featured: true,
   },
@@ -107,15 +111,31 @@ export const SOCIALS: Record<
 /** Spotify artist ID for the embedded player. */
 export const SPOTIFY_ARTIST_ID = "1MmtWj3eNt02HjmdiQVY2q";
 
-/** Photo gallery — real press/live shots scraped from the current site. */
-export const GALLERY: string[] = [
-  "/gallery/g1.jpg",
-  "/gallery/g3.jpg",
-  "/gallery/g5.jpg",
-  "/gallery/g7.jpg",
-  "/gallery/g2.jpg",
-  "/gallery/g4.jpg",
-  "/gallery/g6.jpg",
+/** Photo gallery — real hi-res press/live shots from the current site. */
+export const GALLERY: string[] = Array.from(
+  { length: 14 },
+  (_, i) => `/gallery/g${String(i + 1).padStart(2, "0")}.jpg`
+);
+
+/** YouTube uploads playlist (UC… channel id with the UC swapped for UU). */
+export const YOUTUBE_UPLOADS_PLAYLIST = "UUgPcbcspzKlnl7sej13vPoA";
+
+export type Video = { id: string; title: string };
+
+/** Channel videos (real, from the YouTube RSS feed — titles lightly tidied). */
+export const VIDEOS: Video[] = [
+  { id: "_YQveNfpLgA", title: "Carry On — Official Music Video" },
+  { id: "79iN67QAbtk", title: "No Pasta In The Hot Tub — Official Music Video" },
+  { id: "fO4oHt51kio", title: "One Last Breath (Reggae Version) — Creed Cover" },
+  { id: "CbB13t9Zw14", title: "Santa Claus Is Coming To Town — Official Music Video" },
+  { id: "9dHxvtCUPGU", title: "Amaranthus — Live at The Renegade Winery" },
+  { id: "Lw8dyokq8ZI", title: "Borrowed Time — Live at The Renegade Winery" },
+  { id: "KhouOpHtcE0", title: "No Pasta In The Hot Tub — Live at The Renegade Winery" },
+  { id: "yOAhtRpSeYc", title: "2am — Slightly Stoopid (Live @ PENN2)" },
+  { id: "OZmN5ju-9O0", title: "You Are The Best Thing — Ray LaMontagne (Live @ PENN2)" },
+  { id: "5UkojcYwlQ4", title: "Sweet Dreams — Eurythmics (Live @ Ladder 15)" },
+  { id: "EPcJynQmFpo", title: "Kryptonite — Full Band" },
+  { id: "RAtJ6kpjbI8", title: "Don’t Push — Sublime (Full Band)" },
 ];
 
 /** Hero / press image (real high-res band photo from the current site). */

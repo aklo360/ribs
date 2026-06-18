@@ -23,26 +23,26 @@ export function Music() {
 
   return (
     <Section id="music" eyebrow="Listen" title="Music">
-      <div className="grid gap-6 lg:grid-cols-[1.1fr_1fr]">
-        {/* Featured release */}
+      <div className="grid items-stretch gap-6 lg:grid-cols-[1fr_1fr]">
+        {/* Featured release — stacked: square cover on top, details below */}
         <Reveal>
-          <div className="glass-raised flex h-full flex-col gap-6 rounded-3xl p-6 sm:flex-row sm:p-7">
+          <div className="glass-raised flex h-full flex-col items-center gap-6 rounded-xl p-6 text-center sm:p-8">
             <SmartImage
               src={featured.cover}
               alt={`${featured.title} cover art`}
               seed={1}
               label={featured.title}
-              className="aspect-square w-full shrink-0 rounded-2xl object-cover sm:w-44"
+              className="aspect-square w-full max-w-[300px] rounded-[6px] object-cover"
             />
-            <div className="flex flex-col">
-              <Badge className="mb-3 w-fit gap-1.5 rounded-full bg-primary/15 text-primary">
+            <div className="flex flex-col items-center">
+              <Badge className="mb-3 gap-1.5 rounded-full bg-white/10 text-foreground">
                 <Disc3 className="size-3" />
                 {featured.type} · {featured.status}
               </Badge>
               <h3 className="font-display text-3xl font-bold tracking-tight">
                 {featured.title}
               </h3>
-              <div className="mt-auto flex flex-wrap gap-3 pt-6">
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
                 <Button
                   render={
                     <a
@@ -51,7 +51,7 @@ export function Music() {
                       rel="noopener noreferrer"
                     />
                   }
-                  className="gap-2 font-semibold glow"
+                  className="gap-2 font-semibold"
                 >
                   <Play className="size-4" />
                   Listen Now
@@ -67,7 +67,7 @@ export function Music() {
                         rel="noopener noreferrer"
                         aria-label={p.label}
                         title={p.label}
-                        className="glass flex size-10 items-center justify-center rounded-full text-foreground/70 transition-colors hover:text-primary"
+                        className="glass flex size-10 items-center justify-center rounded-full text-foreground/70 transition-colors hover:text-foreground"
                       >
                         <Icon className="size-4" />
                       </a>
@@ -81,7 +81,7 @@ export function Music() {
 
         {/* Spotify embed */}
         <Reveal delay={0.1}>
-          <div className="glass overflow-hidden rounded-3xl p-2">
+          <div className="glass h-full overflow-hidden rounded-xl p-2">
             <iframe
               title="Roots in Blue Stone on Spotify"
               src={`https://open.spotify.com/embed/artist/${SPOTIFY_ARTIST_ID}?utm_source=generator&theme=0`}
@@ -89,22 +89,25 @@ export function Music() {
               height="100%"
               loading="lazy"
               allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-              className="min-h-[400px] w-full rounded-2xl"
+              className="min-h-[420px] w-full rounded-lg"
               style={{ border: 0 }}
             />
           </div>
         </Reveal>
       </div>
 
-      {/* Originals marquee */}
+      {/* Originals */}
       <Reveal delay={0.15} className="mt-8">
-        <div className="glass flex flex-wrap items-center gap-x-3 gap-y-2 rounded-2xl px-5 py-4">
-          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-foreground/50">
+        <div className="glass flex flex-wrap items-center gap-x-3 gap-y-2 rounded-xl px-5 py-4">
+          <span className="font-mono text-xs uppercase tracking-[0.2em] text-foreground/50">
             Originals
           </span>
           {ORIGINALS.map((song) => (
-            <span key={song} className="flex items-center gap-2 text-sm text-foreground/80">
-              <span className="size-1.5 rounded-full bg-primary" />“{song}”
+            <span
+              key={song}
+              className="flex items-center gap-2 text-sm text-foreground/80"
+            >
+              <span className="size-1.5 rounded-full bg-foreground/60" />“{song}”
             </span>
           ))}
         </div>

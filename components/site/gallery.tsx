@@ -28,7 +28,7 @@ export function Gallery() {
                 src={src}
                 alt={`Roots in Blue Stone live ${i + 1}`}
                 seed={i}
-                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                className="mono h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
               <span className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
             </button>

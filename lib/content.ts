@@ -6,14 +6,17 @@
 export const SITE = {
   name: "Roots in Blue Stone",
   short: "RIBS",
+  // From the band's site motto: "Original Music. Real Vibe. Blue Stone Roots."
   tagline: "Original Music. Real Vibe. Blue Stone Roots.",
+  // Verbatim opening line of their bio.
   description:
-    "Roots in Blue Stone is a Pennsylvania-born band blending reggae, rock, blues, and soul. From two-man looping sets to full festival shows, RIBS brings heart, rhythm, and authenticity to every stage.",
+    "Roots in Blue Stone is a Pennsylvania-born band blending reggae, rock, blues, and soul into a sound that feels both familiar and fresh.",
   // Update to the production domain once confirmed.
   url: "https://www.rootsinbluestone.com",
   bookingEmail: "booking@rootsinbluestone.com",
   genres: ["Reggae", "Rock", "Blues", "Soul"],
   homeBase: "Pennsylvania · The Poconos",
+  logo: "/img/logo.png",
 } as const;
 
 export const BIO = [
@@ -32,28 +35,12 @@ export const MEMBERS: Member[] = [
   { name: "Ian Kirk", role: "Percussion · Vocals · Co-Founder" },
 ];
 
-/** Lineup configurations the band can be booked as. */
+/** Lineup configurations the band can be booked as (labels only — no invented copy). */
 export const LINEUPS = [
-  {
-    key: "duo",
-    label: "Duo",
-    blurb: "The original two-man looping set — guitar, percussion, and vocals layered live.",
-  },
-  {
-    key: "trio",
-    label: "Trio",
-    blurb: "Adds low-end and depth for clubs and mid-size rooms.",
-  },
-  {
-    key: "5-piece",
-    label: "5-Piece",
-    blurb: "Full rhythm section for festivals, breweries, and larger crowds.",
-  },
-  {
-    key: "7-piece",
-    label: "7-Piece",
-    blurb: "Horns and extras for the biggest stages and headline sets.",
-  },
+  { key: "duo", label: "Duo" },
+  { key: "trio", label: "Trio" },
+  { key: "5-piece", label: "5-Piece" },
+  { key: "7-piece", label: "7-Piece" },
 ] as const;
 
 export type Release = {
@@ -70,8 +57,7 @@ export const RELEASES: Release[] = [
     title: "One Last Breath",
     type: "Single",
     status: "Out Now",
-    cover:
-      "https://static.wixstatic.com/media/7464fb_e7f6f1cfd0a449029190c8c70aca7df8~mv2.png",
+    cover: "/img/one-last-breath.png",
     listenUrl: "https://artists.landr.com/057914992419",
     featured: true,
   },
@@ -121,21 +107,19 @@ export const SOCIALS: Record<
 /** Spotify artist ID for the embedded player. */
 export const SPOTIFY_ARTIST_ID = "1MmtWj3eNt02HjmdiQVY2q";
 
-/** Photo gallery — existing press/live shots from the current site. */
+/** Photo gallery — real press/live shots scraped from the current site. */
 export const GALLERY: string[] = [
-  "https://static.wixstatic.com/media/7464fb_233811dcefb841ce9c4d3389711e99fb~mv2.jpg",
-  "https://static.wixstatic.com/media/7464fb_48a57b5aba95432b82248ce95af55005~mv2.jpeg",
-  "https://static.wixstatic.com/media/7464fb_e6fb15eb5497413cbbe59b4fe6c4967c~mv2.jpg",
-  "https://static.wixstatic.com/media/7464fb_c94f30bb6b8d49dcb5a4a0c0f00661bf~mv2.jpeg",
-  "https://static.wixstatic.com/media/7464fb_840e582c737f42cfaabff04fac6d9132~mv2.jpg",
-  "https://static.wixstatic.com/media/7464fb_105e4c91d9e247c594176a4e1ee0b1c9~mv2.jpeg",
-  "https://static.wixstatic.com/media/7464fb_cb086d1abf694a2a856f4155d17192b7~mv2.jpg",
-  "https://static.wixstatic.com/media/7464fb_ef81adf8db2346fb84bedc1c316f0fc3~mv2.jpg",
+  "/gallery/g1.jpg",
+  "/gallery/g3.jpg",
+  "/gallery/g5.jpg",
+  "/gallery/g7.jpg",
+  "/gallery/g2.jpg",
+  "/gallery/g4.jpg",
+  "/gallery/g6.jpg",
 ];
 
-/** Hero / press image used in the hero and About sections. */
-export const HERO_IMAGE =
-  "https://static.wixstatic.com/media/7464fb_88f5c099576043a7a14d234efdef29d2~mv2.jpg";
+/** Hero / press image (real high-res band photo from the current site). */
+export const HERO_IMAGE = "/img/hero-banner.jpg";
 
 export const NAV_LINKS = [
   { label: "Tour", href: "#tour" },

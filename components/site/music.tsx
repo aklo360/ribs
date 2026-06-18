@@ -22,7 +22,7 @@ export function Music() {
   const featured = RELEASES.find((r) => r.featured) ?? RELEASES[0];
 
   return (
-    <Section id="music" eyebrow="Listen" title="New & Now Playing">
+    <Section id="music" eyebrow="Listen" title="Music">
       <div className="grid gap-6 lg:grid-cols-[1.1fr_1fr]">
         {/* Featured release */}
         <Reveal>
@@ -42,10 +42,6 @@ export function Music() {
               <h3 className="font-display text-3xl font-bold tracking-tight">
                 {featured.title}
               </h3>
-              <p className="mt-2 max-w-sm text-sm text-foreground/65">
-                The latest from Roots in Blue Stone — stream it now on your
-                platform of choice.
-              </p>
               <div className="mt-auto flex flex-wrap gap-3 pt-6">
                 <Button
                   render={

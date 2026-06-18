@@ -9,4 +9,7 @@
 - Built single-scroll site: glass nav, hero with 3 priority CTAs (Tour / Latest Release / Book), tour list (`lib/tour.ts`, empty-state + PLACEHOLDER upcoming dates), music section with live Spotify embed, about + lineups, gallery lightbox, video, footer; plus a `/book` route.
 - Built a 5-step booking inquiry form (react-hook-form + zod) capturing contact, event, performance, sound/backline, and budget details; `POST /api/book` sends via Resend with a graceful no-op when keys are absent.
 - Verified: `npm run build` + `npm run lint` clean; browser walkthrough of all sections and full booking submit → success state.
-- Pending: real Resend key + recipient, real tour dates, real photos, Cloudflare deploy + DNS cutover, GitHub repo creation (all approval-gated).
+- Pending: real Resend key + recipient, real tour dates, real photos, production deploy + DNS cutover (all approval-gated).
+- Created private GitHub repo `aklo360/ribs` (https://github.com/aklo360/ribs) and pushed `main`.
+- Deployed to Cloudflare Pages project `roots-in-blue-stone` (staging branch). Live: https://staging.roots-in-blue-stone.pages.dev. Built with `@cloudflare/next-on-pages` (works on Next 16); the edge `/api/book` route runs on CF (verified 200 valid / 422 invalid, graceful no-op without Resend keys).
+- Verified live on Cloudflare across iPhone, iPad, tiny Android (360px), and desktop (1440) — no horizontal overflow, desktop layout preserved.

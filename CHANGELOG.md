@@ -1,5 +1,18 @@
 # Changelog — Roots in Blue Stone (RIBS)
 
+## 2026-06-18 — Carousels, full-color photos, brand/form polish
+
+- Scraped 40 hi-res originals from the Wix CDN; curated 14 real band photos, resized/optimized into `public/gallery` (cover converted to lean jpg). Removed the raw-originals folder.
+- Images now display in full color; only the hero stays black & white.
+- Gallery → full-size carousel (one big image, arrows, counter, thumbnail strip) instead of a grid.
+- Video → real YouTube channel carousel built from the channel RSS feed (12 videos: official music videos, Renegade Winery live sets, covers) with a lightbox player.
+- Music section restructured to the stacked album layout on all breakpoints; square cover that never crops, minimal radius.
+- Tightened card border-radii globally (buttons + pills unchanged).
+- Footer uses the logo wordmark (never the band name in our font) + an ultra-minimal "Designed by NewSphere" credit. Same rule applied to the mobile menu and section titles ("Book the Band", "The Band").
+- Booking form: "desired set length" is now a pill selector; added real Dusk social proof (5.0★ / 11 reviews, links to dusk.fm/@rootsinbluestone).
+- Deep-dive finding: their EPK is a Dusk profile (dusk.fm/@rootsinbluestone). Merch intentionally still excluded.
+- Redeployed staging: https://staging.roots-in-blue-stone.pages.dev (verified live: gallery + YouTube thumbnails load, all sections render).
+
 ## 2026-06-18 — Monochrome redesign
 
 - Scraped the band's real assets from the Wix CDN (browser-based, since curl is 403'd) into `public/`: logo wordmark (`img/logo.png`), high-res stage photo (`img/hero-banner.jpg`), "One Last Breath" cover (`img/one-last-breath.png`), gallery shots (`gallery/g*.jpg`). Content now points at local files.

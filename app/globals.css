@@ -9,8 +9,8 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-display: var(--font-bricolage);
-  --font-heading: var(--font-bricolage);
+  --font-display: var(--font-syne);
+  --font-heading: var(--font-syne);
 
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -42,10 +42,6 @@
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
 
-  /* Brand amber (stage-light accent) */
-  --color-amber: var(--brand-amber);
-  --color-amber-soft: var(--brand-amber-soft);
-
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -56,74 +52,77 @@
 }
 
 /*
-  Bluestone Dark — deep slate-indigo base, frosted glass, warm amber stage glow.
-  The palette is defined on :root AND .dark so the site is dark-first either way.
+  Monochrome Chrome — sleek clean black base, white/grayscale + metallic chrome
+  highlights. No color accents. Dark-first (tokens on :root and .dark).
 */
 :root,
 .dark {
-  --background: #0b0f1a;
-  --foreground: #e9e7ef;
+  --background: #060606;
+  --foreground: #f4f4f5;
 
-  --card: #111829;
-  --card-foreground: #e9e7ef;
-  --popover: #121a2b;
-  --popover-foreground: #e9e7ef;
+  --card: #0f0f10;
+  --card-foreground: #f4f4f5;
+  --popover: #121214;
+  --popover-foreground: #f4f4f5;
 
-  /* Amber is the primary action color */
-  --primary: #e0a84f;
-  --primary-foreground: #1a1206;
+  /* Primary action = near-white on black (high contrast, sleek) */
+  --primary: #f5f5f6;
+  --primary-foreground: #0a0a0a;
 
-  --secondary: #1a2233;
-  --secondary-foreground: #e9e7ef;
+  --secondary: #19191c;
+  --secondary-foreground: #f4f4f5;
 
-  --muted: #161d2c;
-  --muted-foreground: #95a0b8;
+  --muted: #151517;
+  --muted-foreground: #a1a1aa;
 
-  --accent: #1d2840;
-  --accent-foreground: #f4d699;
+  --accent: #1c1c20;
+  --accent-foreground: #fafafa;
 
-  --destructive: #e0675a;
+  --destructive: #ef5350;
 
   --border: rgba(255, 255, 255, 0.1);
   --input: rgba(255, 255, 255, 0.14);
-  --ring: #e0a84f;
+  --ring: rgba(255, 255, 255, 0.55);
 
-  --chart-1: #e0a84f;
-  --chart-2: #5ea0c9;
-  --chart-3: #6fbf9b;
-  --chart-4: #b98ce0;
-  --chart-5: #e0675a;
+  --chart-1: #f5f5f6;
+  --chart-2: #c4c4c8;
+  --chart-3: #9a9aa0;
+  --chart-4: #6f6f76;
+  --chart-5: #444448;
 
   --radius: 1rem;
 
-  --sidebar: #0d1322;
-  --sidebar-foreground: #e9e7ef;
-  --sidebar-primary: #e0a84f;
-  --sidebar-primary-foreground: #1a1206;
-  --sidebar-accent: #1d2840;
-  --sidebar-accent-foreground: #f4d699;
+  --sidebar: #0a0a0b;
+  --sidebar-foreground: #f4f4f5;
+  --sidebar-primary: #f5f5f6;
+  --sidebar-primary-foreground: #0a0a0a;
+  --sidebar-accent: #1c1c20;
+  --sidebar-accent-foreground: #fafafa;
   --sidebar-border: rgba(255, 255, 255, 0.1);
-  --sidebar-ring: #e0a84f;
-
-  /* Brand tokens */
-  --brand-amber: #e0a84f;
-  --brand-amber-soft: #f4d699;
-  --brand-blue: #3da9fc;
+  --sidebar-ring: rgba(255, 255, 255, 0.55);
 
   /* Glass + depth */
   --glass-bg: rgba(255, 255, 255, 0.04);
   --glass-bg-raised: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.07),
-    rgba(255, 255, 255, 0.025)
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.02)
   );
   --glass-blur: 22px;
   --hairline: rgba(255, 255, 255, 0.1);
-  --hairline-strong: rgba(255, 255, 255, 0.2);
-  --shadow-floating: inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
-    inset 0 -1px 0 0 rgba(0, 0, 0, 0.5), 0 30px 60px -32px rgba(0, 0, 0, 0.9);
-  --shadow-glow: 0 10px 44px -12px rgba(224, 168, 79, 0.4);
-  --gradient-amber: linear-gradient(135deg, #f4d699 0%, #e0a84f 52%, #b67d2c 100%);
+  --hairline-strong: rgba(255, 255, 255, 0.22);
+  --shadow-floating: inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.6), 0 30px 60px -32px rgba(0, 0, 0, 0.95);
+  --shadow-glow: 0 12px 48px -14px rgba(255, 255, 255, 0.28);
+
+  /* Metallic chrome gradient — used for the wordmark accents + highlights */
+  --gradient-chrome: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #d6d6da 36%,
+    #86868c 58%,
+    #f0f0f3 100%
+  );
 }
 
 @layer base {
@@ -136,62 +135,65 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
-    /* Page wash: amber stage glow + cool slate pools over the deep base */
+    /* Clean black with faint silver pools — no color */
     background-image: radial-gradient(
-        circle at 50% -8%,
-        rgba(224, 168, 79, 0.14),
-        transparent 52%
+        circle at 50% -10%,
+        rgba(255, 255, 255, 0.07),
+        transparent 50%
       ),
-      radial-gradient(circle at 88% 6%, rgba(61, 169, 252, 0.08), transparent 44%),
-      radial-gradient(circle at 8% 96%, rgba(224, 168, 79, 0.05), transparent 50%);
+      radial-gradient(circle at 85% 8%, rgba(255, 255, 255, 0.03), transparent 42%);
     background-attachment: fixed;
   }
   h1, h2, h3, h4, .font-display {
-    font-family: var(--font-bricolage), var(--font-geist-sans), sans-serif;
+    font-family: var(--font-syne), var(--font-geist-sans), sans-serif;
     letter-spacing: -0.02em;
   }
   ::selection {
-    background: rgba(224, 168, 79, 0.3);
-    color: #fff;
+    background: rgba(255, 255, 255, 0.85);
+    color: #000;
   }
 }
 
 @layer components {
-  /* Frosted glass surface — the house signature */
   .glass {
     background: var(--glass-bg);
     border: 1px solid var(--hairline);
     box-shadow: var(--shadow-floating);
-    backdrop-filter: blur(var(--glass-blur)) saturate(1.3);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.3);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
   }
   .glass-raised {
     background: var(--glass-bg-raised);
     border: 1px solid var(--hairline);
     box-shadow: var(--shadow-floating);
-    backdrop-filter: blur(var(--glass-blur)) saturate(1.3);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.3);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
   }
   .glass-nav {
-    background: rgba(11, 15, 26, 0.6);
+    background: rgba(6, 6, 6, 0.6);
     border-bottom: 1px solid var(--hairline);
-    backdrop-filter: blur(18px) saturate(1.4);
-    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+    backdrop-filter: blur(18px) saturate(1.3);
+    -webkit-backdrop-filter: blur(18px) saturate(1.3);
   }
   .hairline {
     border: 1px solid var(--hairline);
   }
-  /* Amber gradient wordmark / accents */
-  .brand-gradient {
-    background: var(--gradient-amber);
+  /* Metallic chrome text */
+  .brand-gradient,
+  .chrome-text {
+    background: var(--gradient-chrome);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
   .text-glow {
-    text-shadow: 0 0 28px rgba(224, 168, 79, 0.45);
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.35);
   }
   .glow {
     box-shadow: var(--shadow-glow);
+  }
+  /* Force a clean grayscale treatment on photography */
+  .mono {
+    filter: grayscale(1) contrast(1.04) brightness(0.98);
   }
 }

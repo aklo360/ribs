@@ -2,8 +2,7 @@ import { Users } from "lucide-react";
 import { Section } from "./section";
 import { Reveal } from "./reveal";
 import { SmartImage } from "./smart-image";
-import { Badge } from "@/components/ui/badge";
-import { BIO, MEMBERS, LINEUPS, HERO_IMAGE } from "@/lib/content";
+import { BIO, MEMBERS, LINEUPS, GALLERY } from "@/lib/content";
 
 export function About() {
   return (
@@ -45,27 +44,27 @@ export function About() {
 
         <Reveal delay={0.1}>
           <SmartImage
-            src={HERO_IMAGE}
+            src={GALLERY[0]}
             alt="Roots in Blue Stone"
             seed={2}
-            className="aspect-[4/5] w-full rounded-3xl object-cover"
+            className="mono aspect-[4/5] w-full rounded-3xl object-cover"
           />
         </Reveal>
       </div>
 
       {/* Lineup configurations */}
       <Reveal delay={0.1} className="mt-12">
-        <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-foreground/50">
-          Book us as a…
+        <p className="mb-4 font-mono text-xs uppercase tracking-[0.22em] text-foreground/50">
+          Available as
         </p>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="flex flex-wrap gap-3">
           {LINEUPS.map((l) => (
-            <div key={l.key} className="glass rounded-2xl p-5">
-              <Badge className="mb-3 rounded-full bg-primary/15 text-primary">
-                {l.label}
-              </Badge>
-              <p className="text-sm leading-relaxed text-foreground/65">{l.blurb}</p>
-            </div>
+            <span
+              key={l.key}
+              className="glass rounded-full px-5 py-2.5 font-display text-base font-semibold tracking-tight"
+            >
+              {l.label}
+            </span>
           ))}
         </div>
       </Reveal>

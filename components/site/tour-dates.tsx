@@ -21,10 +21,10 @@ export function TourDates() {
       {shows.length === 0 ? (
         <Reveal>
           <div className="glass flex flex-col items-center gap-4 rounded-3xl px-6 py-16 text-center">
-            <CalendarOff className="size-8 text-primary" />
+            <CalendarOff className="size-8 text-foreground/70" />
             <p className="max-w-md text-foreground/70">
-              No public dates announced right now. Want Roots in Blue Stone at
-              your venue, festival, or private event?
+              No upcoming dates announced right now. Want Roots in Blue Stone at
+              your event?
             </p>
             <Button render={<a href="#book" />} className="font-semibold glow">
               Book the Band

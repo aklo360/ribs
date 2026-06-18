@@ -36,6 +36,15 @@ export const LINEUP_OPTIONS = [
 
 export const REPERTOIRE_OPTIONS = ["Originals", "Covers", "Mix of both"] as const;
 
+export const SET_LENGTH_OPTIONS = [
+  "45 min",
+  "1 hour",
+  "2 × 45 min",
+  "2 × 60 min",
+  "3+ hours",
+  "Flexible",
+] as const;
+
 export const PROVIDED_OPTIONS = ["Provided", "Band to provide", "Unsure"] as const;
 
 export const BACKLINE_ITEMS = [
@@ -88,7 +97,7 @@ export const bookingSchema = z.object({
 
   // Performance
   lineup: z.enum(LINEUP_OPTIONS).optional(),
-  setLength: z.string().optional(),
+  setLength: z.enum(SET_LENGTH_OPTIONS).optional(),
   repertoire: z.enum(REPERTOIRE_OPTIONS).optional(),
 
   // Technical / backline
@@ -120,7 +129,6 @@ export const bookingDefaults: Partial<BookingInput> = {
   region: "",
   venueName: "",
   audienceSize: "",
-  setLength: "",
   soundEngineerNeeded: false,
   backline: [],
   stageNotes: "",

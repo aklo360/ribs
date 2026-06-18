@@ -102,7 +102,7 @@ export function Hero() {
               <p className="mb-3 px-1 font-mono text-[0.65rem] uppercase tracking-[0.25em] text-foreground/60">
                 Latest Release
               </p>
-              <div className="relative overflow-hidden rounded-2xl">
+              <div className="relative overflow-hidden rounded-[6px]">
                 <SmartImage
                   src={latest.cover}
                   alt={`${latest.title} cover art`}

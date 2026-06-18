@@ -6,7 +6,7 @@ import { BIO, MEMBERS, LINEUPS, GALLERY } from "@/lib/content";
 
 export function About() {
   return (
-    <Section id="about" eyebrow="The Band" title="About Roots in Blue Stone">
+    <Section id="about" eyebrow="About" title="The Band">
       <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr]">
         <Reveal>
           <div className="space-y-5">
@@ -44,10 +44,10 @@ export function About() {
 
         <Reveal delay={0.1}>
           <SmartImage
-            src={GALLERY[0]}
+            src={GALLERY[9]}
             alt="Roots in Blue Stone"
             seed={2}
-            className="mono aspect-[4/5] w-full rounded-3xl object-cover"
+            className="aspect-[4/5] w-full rounded-xl object-cover"
           />
         </Reveal>
       </div>

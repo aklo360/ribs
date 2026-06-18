@@ -80,9 +80,9 @@ export function SiteNav() {
               side="right"
               className="glass-nav border-l border-border w-72 px-6 py-8"
             >
-              <SheetTitle className="font-display text-lg font-bold tracking-tight">
-                {SITE.name}
-              </SheetTitle>
+              <SheetTitle className="sr-only">{SITE.name}</SheetTitle>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={SITE.logo} alt={SITE.name} className="h-8 w-auto" />
               <div className="mt-8 flex flex-col gap-1">
                 {NAV_LINKS.map((l) => (
                   <SheetClose

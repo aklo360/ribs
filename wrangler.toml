@@ -1,0 +1,9 @@
+name = "roots-in-blue-stone"
+compatibility_date = "2025-06-18"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".vercel/output/static"
+
+# Cloudflare Pages target for the Roots in Blue Stone site.
+# Deploy is NOT run automatically — confirm target/domain first.
+# Set these as Pages secrets (dashboard or `wrangler pages secret put`):
+#   RESEND_API_KEY, BOOKING_TO_EMAIL, BOOKING_FROM_EMAIL

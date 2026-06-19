@@ -53,6 +53,8 @@ export type Release = {
   status: string;
   cover: string;
   listenUrl: string;
+  /** Spotify track id — powers the embedded player widget. */
+  spotifyTrackId?: string;
   featured?: boolean;
 };
 
@@ -63,6 +65,7 @@ export const RELEASES: Release[] = [
     status: "Out Now",
     cover: "/img/one-last-breath.jpg",
     listenUrl: "https://artists.landr.com/057914992419",
+    spotifyTrackId: "2bLFDKSspU5NvQ4EwDxrA1",
     featured: true,
   },
 ];

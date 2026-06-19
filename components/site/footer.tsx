@@ -25,9 +25,11 @@ export function Footer() {
           <div className="max-w-sm">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={SITE.logo} alt={SITE.name} className="h-12 w-auto" />
-            <p className="mt-4 max-w-xs font-mono text-xs uppercase tracking-[0.16em] text-foreground/55">
-              {SITE.tagline}
-            </p>
+            <div className="mt-4 space-y-0.5 font-mono text-xs uppercase tracking-[0.16em] text-foreground/55">
+              {SITE.taglineLines.map((line) => (
+                <p key={line}>{line}</p>
+              ))}
+            </div>
             <a
               href={`mailto:${SITE.bookingEmail}`}
               className="mt-4 inline-flex items-center gap-2 text-sm text-foreground/70 transition-colors hover:text-foreground"

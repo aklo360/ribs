@@ -50,7 +50,7 @@ export function Newsletter() {
             Stay in the loop
           </h3>
           <p className="mt-1.5 text-sm text-foreground/60">
-            Tour dates and new releases, straight to your inbox.
+            Never miss an upcoming tour date or release.
           </p>
         </div>
 

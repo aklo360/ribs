@@ -1,5 +1,12 @@
 # Changelog — Roots in Blue Stone (RIBS)
 
+## 2026-06-18 — Hero release player evolution
+
+- Removed genre badges from the hero.
+- Iterated the hero "latest release" tile: Spotify iframe → custom minimal preview player → final: large **cover art linking to Apple Music** plus a **sticky scroll-following player**.
+- `StickyPlayer` (`components/site/sticky-player.tsx`): slim monochrome bar that slides up past the hero and follows on scroll, plays the track's 30s preview (Spotify preview mp3), with Spotify + Apple links and a dismiss.
+- Pulled real platform links via public APIs (no asks of Walter): Spotify track `2bLFDKSspU5NvQ4EwDxrA1` + preview mp3; Apple Music track `1881358433?i=1881358434` via the iTunes lookup API.
+
 ## 2026-06-18 — Carousels, full-color photos, brand/form polish
 
 - Scraped 40 hi-res originals from the Wix CDN; curated 14 real band photos, resized/optimized into `public/gallery` (cover converted to lean jpg). Removed the raw-originals folder.

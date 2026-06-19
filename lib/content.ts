@@ -35,8 +35,8 @@ export type Member = {
 };
 
 export const MEMBERS: Member[] = [
-  { name: "Walter Lee", role: "Vocals · Guitar · Co-Founder" },
-  { name: "Ian Kirk", role: "Percussion · Vocals · Co-Founder" },
+  { name: "Walter Lee", role: "Vocals · Guitar · Percussion" },
+  { name: "Ian Kirk", role: "Vocals · Lead Guitar" },
 ];
 
 /** Lineup configurations the band can be booked as (labels only — no invented copy). */

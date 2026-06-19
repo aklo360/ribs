@@ -1,22 +1,10 @@
-import { Disc3, Play } from "lucide-react";
+import { Disc3 } from "lucide-react";
 import { Section } from "./section";
 import { Reveal } from "./reveal";
 import { SmartImage } from "./smart-image";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  RELEASES,
-  SOCIALS,
-  SPOTIFY_ARTIST_ID,
-  ORIGINALS,
-} from "@/lib/content";
-import { SOCIAL_ICONS } from "./icons";
-
-const PLATFORMS = [
-  { key: "spotify", ...SOCIALS.spotify },
-  { key: "appleMusic", ...SOCIALS.appleMusic },
-  { key: "youtube", ...SOCIALS.youtube },
-] as const;
+import { RELEASES, SPOTIFY_ARTIST_ID, ORIGINALS, STREAMING } from "@/lib/content";
+import { STREAM_ICONS } from "./icons";
 
 export function Music() {
   const featured = RELEASES.find((r) => r.featured) ?? RELEASES[0];
@@ -34,7 +22,7 @@ export function Music() {
               label={featured.title}
               className="aspect-square w-full max-w-[300px] rounded-[6px] object-cover"
             />
-            <div className="flex flex-col items-center">
+            <div className="flex w-full flex-col items-center">
               <Badge className="mb-3 gap-1.5 rounded-full bg-white/10 text-foreground">
                 <Disc3 className="size-3" />
                 {featured.type} · {featured.status}
@@ -42,38 +30,25 @@ export function Music() {
               <h3 className="font-display text-3xl font-bold tracking-tight">
                 {featured.title}
               </h3>
-              <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-                <Button
-                  render={
+
+              {/* Listen on… platform icons (from the LANDR smart link) */}
+              <div className="mt-5 flex flex-wrap items-center justify-center gap-2.5">
+                {STREAMING.map((p) => {
+                  const Icon = STREAM_ICONS[p.key];
+                  return (
                     <a
-                      href={featured.listenUrl}
+                      key={p.key}
+                      href={p.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                    />
-                  }
-                  className="gap-2 font-semibold"
-                >
-                  <Play className="size-4" />
-                  Listen Now
-                </Button>
-                <div className="flex items-center gap-2">
-                  {PLATFORMS.map((p) => {
-                    const Icon = SOCIAL_ICONS[p.key];
-                    return (
-                      <a
-                        key={p.key}
-                        href={p.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={p.label}
-                        title={p.label}
-                        className="glass flex size-10 items-center justify-center rounded-full text-foreground/70 transition-colors hover:text-foreground"
-                      >
-                        <Icon className="size-4" />
-                      </a>
-                    );
-                  })}
-                </div>
+                      aria-label={`Listen on ${p.label}`}
+                      title={p.label}
+                      className="glass flex size-11 items-center justify-center rounded-full text-foreground/70 transition-all hover:scale-105 hover:text-foreground"
+                    >
+                      <Icon className="size-[18px]" />
+                    </a>
+                  );
+                })}
               </div>
             </div>
           </div>

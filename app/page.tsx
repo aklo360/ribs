@@ -6,6 +6,7 @@ import { About } from "@/components/site/about";
 import { Gallery } from "@/components/site/gallery";
 import { Video } from "@/components/site/video";
 import { BookingSection } from "@/components/site/booking-section";
+import { Newsletter } from "@/components/site/newsletter";
 import { Footer } from "@/components/site/footer";
 import { StickyPlayer } from "@/components/site/sticky-player";
 
@@ -21,6 +22,7 @@ export default function Home() {
         <Gallery />
         <Video />
         <BookingSection />
+        <Newsletter />
       </main>
       <Footer />
       <StickyPlayer />

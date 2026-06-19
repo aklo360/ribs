@@ -6,8 +6,7 @@
 export const SITE = {
   name: "Roots in Blue Stone",
   short: "RIBS",
-  // From the band's site motto: "Original Music. Real Vibe. Blue Stone Roots."
-  tagline: "Original Music. Real Vibe. Blue Stone Roots.",
+  tagline: "Originals & Covers. Groove, Grit & Good Vibes.",
   // Verbatim opening line of their bio.
   description:
     "Roots in Blue Stone is a Pennsylvania-born band blending reggae, rock, blues, and soul into a sound that feels both familiar and fresh.",
@@ -24,9 +23,9 @@ export const SITE = {
 } as const;
 
 export const BIO = [
-  "Roots in Blue Stone is a Pennsylvania-born band blending reggae, rock, blues, and soul into a sound that feels both familiar and fresh. Built on the powerful chemistry between Walter Lee and Ian Kirk, the duo began as a live looping project — layering guitar, percussion, and vocals in real time — and grew into a dynamic act capable of filling any stage, from intimate wineries to packed festivals.",
-  'Our music lives at the crossroads of roots and groove, inspired by artists like Bob Marley, Lynyrd Skynyrd, Sublime, and Joe Bonamassa, while grounded in the storytelling spirit of the Poconos and family. Whether performing original songs like "Carry On" and "No Pasta In The Hot Tub" or reimagining crowd favorites for weddings and private events, Roots in Blue Stone brings heart, rhythm, and authenticity to every performance.',
-  "From full-band festival shows to two-man looping sets, we create live experiences that connect people — through groove, grit, and good vibes.",
+  "Roots in Blue Stone is a Pennsylvania-born band blending reggae, rock, blues, and soul into a sound that feels both familiar and fresh. Built on the powerful chemistry between Walter Lee and Ian Kirk, the duo began as a live looping project, layering guitar, percussion, and vocals in real time, and grew into a dynamic act capable of filling any stage, from intimate wineries to packed festivals.",
+  'Our music lives at the crossroads of blues rock and groove, inspired by artists like Bob Marley, Lynyrd Skynyrd, Sublime, and Joe Bonamassa, while grounded in the storytelling spirit of the Poconos and family. Whether performing original songs like "Carry On" and "No Pasta In The Hot Tub" or reimagining crowd favorites for weddings and private events, Roots in Blue Stone brings heart, rhythm, and authenticity to every performance.',
+  "From full-band festival shows to two-man looping sets, we create live experiences that connect people through groove, grit, and good vibes.",
 ] as const;
 
 export type Member = {
@@ -82,6 +81,50 @@ export const RELEASES: Release[] = [
 
 export const spotifyTrackUrl = (id: string) =>
   `https://open.spotify.com/track/${id}`;
+
+/** Per-platform links for the featured release (from its LANDR smart link). */
+export type StreamPlatform =
+  | "spotify"
+  | "appleMusic"
+  | "youtubeMusic"
+  | "amazonMusic"
+  | "deezer"
+  | "tidal"
+  | "pandora";
+
+export const STREAMING: { key: StreamPlatform; label: string; url: string }[] = [
+  {
+    key: "spotify",
+    label: "Spotify",
+    url: "https://open.spotify.com/track/2bLFDKSspU5NvQ4EwDxrA1",
+  },
+  {
+    key: "appleMusic",
+    label: "Apple Music",
+    url: "https://music.apple.com/us/album/1881358433?app=music&at=1l3vpUI&ct=LFV_ca8a6b4e0a4f3cb0bcf22c9be995105c&itscg=30440&itsct=catchall_p1&lId=215316995&cId=none&sr=1&src=Linkfire&ls=1",
+  },
+  {
+    key: "youtubeMusic",
+    label: "YouTube Music",
+    url: "https://music.youtube.com/playlist?list=OLAK5uy_nXvtc9nB3qsGMsw_L3hzDr7cihtA5kfPI&src=Linkfire",
+  },
+  {
+    key: "amazonMusic",
+    label: "Amazon Music",
+    url: "https://music.amazon.com/albums/B0GQQY678L?tag=linkfiregen&ie=UTF8&linkCode=as2&ascsubtag=ca8a6b4e0a4f3cb0bcf22c9be995105c",
+  },
+  {
+    key: "deezer",
+    label: "Deezer",
+    url: "https://www.deezer.com/album/930108651?app_id=140685&utm_source=partner_linkfire",
+  },
+  { key: "tidal", label: "Tidal", url: "http://www.tidal.com/album/503352364" },
+  {
+    key: "pandora",
+    label: "Pandora",
+    url: "https://pandora.app.link/?$desktop_url=https%3A%2F%2Fwww.pandora.com%2Fartist%2Froots-in-blue-stone%2F1-last-breath%2FALn4khbmmkwjbJ9",
+  },
+];
 
 /** Originals worth highlighting. */
 export const ORIGINALS = ["Carry On", "No Pasta In The Hot Tub", "One Last Breath"];

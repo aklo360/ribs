@@ -3,7 +3,7 @@ import { Section } from "./section";
 import { Reveal } from "./reveal";
 import { SmartImage } from "./smart-image";
 import { Badge } from "@/components/ui/badge";
-import { RELEASES, SPOTIFY_ARTIST_ID, ORIGINALS, STREAMING } from "@/lib/content";
+import { RELEASES, SPOTIFY_ARTIST_ID, STREAMING } from "@/lib/content";
 import { STREAM_ICONS } from "./icons";
 
 export function Music() {
@@ -70,23 +70,6 @@ export function Music() {
           </div>
         </Reveal>
       </div>
-
-      {/* Originals */}
-      <Reveal delay={0.15} className="mt-8">
-        <div className="glass flex flex-wrap items-center gap-x-3 gap-y-2 rounded-xl px-5 py-4">
-          <span className="font-mono text-xs uppercase tracking-[0.2em] text-foreground/50">
-            Originals
-          </span>
-          {ORIGINALS.map((song) => (
-            <span
-              key={song}
-              className="flex items-center gap-2 text-sm text-foreground/80"
-            >
-              <span className="size-1.5 rounded-full bg-foreground/60" />“{song}”
-            </span>
-          ))}
-        </div>
-      </Reveal>
     </Section>
   );
 }

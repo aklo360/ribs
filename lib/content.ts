@@ -24,7 +24,7 @@ export const SITE = {
 
 export const BIO = [
   "Roots in Blue Stone is a Pennsylvania-born band blending reggae, rock, blues, and soul into a sound that feels both familiar and fresh. Built on the powerful chemistry between Walter Lee and Ian Kirk, the duo began as a live looping project, layering guitar, percussion, and vocals in real time, and grew into a dynamic act capable of filling any stage, from intimate wineries to packed festivals.",
-  'Our music lives at the crossroads of blues rock and groove, inspired by artists like Bob Marley, Lynyrd Skynyrd, Sublime, and Joe Bonamassa, while grounded in the storytelling spirit of the Poconos and family. Whether performing original songs like "Carry On" and "No Pasta In The Hot Tub" or reimagining crowd favorites for weddings and private events, Roots in Blue Stone brings heart, rhythm, and authenticity to every performance.',
+`Our music lives at the crossroads of blues rock and groove, inspired by artists like Bob Marley, Lynyrd Skynyrd, Sublime and Joe Bonamassa, while grounded in the roots of Walter & Ian’s hometown in the Poconos. Whether performing original songs like "Carry On" and "No Pasta In The Hot Tub" or reimagining crowd favorites such as a reggae version of Creed’s “One Last Breath” for weddings and private events, Roots in Blue Stone brings heart, rhythm, and authenticity to every performance.`,
   "From full-band festival shows to two-man looping sets, we create live experiences that connect people through groove, grit, and good vibes.",
 ] as const;
 

@@ -32,15 +32,6 @@ export function SiteNav() {
       )}
     >
       <nav className="relative mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 sm:px-8">
-        <a href="#top" aria-label={SITE.name} className="flex items-center">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={SITE.logo}
-            alt={SITE.name}
-            className="h-7 w-auto sm:h-8"
-          />
-        </a>
-
         <div className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-7 md:flex">
           {NAV_LINKS.filter((l) => l.href !== "#tour").map((l) => (
             <a
@@ -53,7 +44,7 @@ export function SiteNav() {
           ))}
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="ml-auto flex items-center gap-2.5">
           <Button
             variant="outline"
             render={<a href="#tour" />}

@@ -34,6 +34,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center lg:text-left"
         >
           <h1 className="sr-only">
             {SITE.name} — {SITE.tagline}
@@ -44,7 +45,7 @@ export function Hero() {
           <img
             src={SITE.logo}
             alt={SITE.name}
-            className="w-[290px] max-w-full drop-shadow-[0_4px_30px_rgba(0,0,0,0.7)] sm:w-[380px] md:w-[460px] lg:w-[520px]"
+            className="mx-auto block w-[290px] max-w-full drop-shadow-[0_4px_30px_rgba(0,0,0,0.7)] sm:w-[380px] md:w-[460px] lg:mx-0 lg:w-[520px]"
           />
 
           <div className="mt-6 space-y-0.5 font-mono text-sm uppercase tracking-[0.18em] text-foreground/65 sm:text-base">
@@ -53,7 +54,7 @@ export function Hero() {
             ))}
           </div>
 
-          <div className="mt-9 flex flex-wrap gap-3">
+          <div className="mt-9 flex flex-wrap justify-center gap-3 lg:justify-start">
             <Button
               size="lg"
               render={<a href="#tour" />}
@@ -73,7 +74,7 @@ export function Hero() {
             </Button>
           </div>
 
-          <SocialLinks className="mt-10" />
+          <SocialLinks className="mt-10 justify-center lg:justify-start" />
         </motion.div>
 
         {/* Right column — cover art linking to Apple Music */}

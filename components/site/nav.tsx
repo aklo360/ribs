@@ -31,7 +31,7 @@ export function SiteNav() {
         scrolled ? "glass-nav py-2.5" : "py-4"
       )}
     >
-      <nav className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 sm:px-8">
+      <nav className="relative mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 sm:px-8">
         <a href="#top" aria-label={SITE.name} className="flex items-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -41,7 +41,7 @@ export function SiteNav() {
           />
         </a>
 
-        <div className="hidden items-center gap-7 md:flex">
+        <div className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-7 md:flex">
           {NAV_LINKS.filter((l) => l.href !== "#tour").map((l) => (
             <a
               key={l.href}

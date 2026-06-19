@@ -44,7 +44,7 @@ export function About() {
 
         <Reveal delay={0.1}>
           <SmartImage
-            src={GALLERY[9]}
+            src={GALLERY[19]}
             alt="Roots in Blue Stone"
             seed={2}
             className="aspect-[4/5] w-full rounded-xl object-cover"

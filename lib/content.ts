@@ -175,7 +175,7 @@ export const SPOTIFY_ARTIST_ID = "1MmtWj3eNt02HjmdiQVY2q";
 
 /** Photo gallery — real hi-res press/live shots from the current site. */
 export const GALLERY: string[] = Array.from(
-  { length: 14 },
+  { length: 24 },
   (_, i) => `/gallery/g${String(i + 1).padStart(2, "0")}.jpg`
 );
 

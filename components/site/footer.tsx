@@ -21,8 +21,8 @@ export function Footer() {
   return (
     <footer className="relative mt-10 border-t border-border px-5 py-14 sm:px-8">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-10">
-        <div className="flex flex-col justify-between gap-8 md:flex-row">
-          <div className="max-w-sm">
+        <div className="flex flex-col items-center gap-8 text-center md:flex-row md:items-start md:justify-between md:text-left">
+          <div className="flex max-w-sm flex-col items-center md:items-start">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={SITE.logo} alt={SITE.name} className="h-12 w-auto" />
             <div className="mt-4 space-y-0.5 font-mono text-xs uppercase tracking-[0.16em] text-foreground/55">
@@ -39,8 +39,8 @@ export function Footer() {
             </a>
           </div>
 
-          <div className="flex flex-col gap-4 md:items-end">
-            <nav className="flex flex-wrap gap-x-6 gap-y-2 md:justify-end">
+          <div className="flex flex-col items-center gap-4 md:items-end">
+            <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2 md:justify-end">
               {NAV_LINKS.map((l) => (
                 <a
                   key={l.href}

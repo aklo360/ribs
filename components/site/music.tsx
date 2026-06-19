@@ -32,7 +32,7 @@ export function Music() {
               </h3>
 
               {/* Listen on… platform icons (from the LANDR smart link) */}
-              <div className="mt-5 flex flex-wrap items-center justify-center gap-2.5">
+              <div className="mt-5 flex flex-nowrap items-center justify-center gap-1.5 sm:gap-2.5">
                 {STREAMING.map((p) => {
                   const Icon = STREAM_ICONS[p.key];
                   return (
@@ -43,9 +43,9 @@ export function Music() {
                       rel="noopener noreferrer"
                       aria-label={`Listen on ${p.label}`}
                       title={p.label}
-                      className="glass flex size-11 items-center justify-center rounded-full text-foreground/70 transition-all hover:scale-105 hover:text-foreground"
+                      className="glass flex size-8 shrink-0 items-center justify-center rounded-full text-foreground/70 transition-all hover:scale-105 hover:text-foreground sm:size-11"
                     >
-                      <Icon className="size-[18px]" />
+                      <Icon className="size-4 sm:size-[18px]" />
                     </a>
                   );
                 })}

@@ -21,10 +21,18 @@ function fmt(s: number) {
 export function StickyPlayer() {
   const release = RELEASES.find((r) => r.featured) ?? RELEASES[0];
   const audioRef = useRef<HTMLAudioElement>(null);
+  const [scrolled, setScrolled] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [cur, setCur] = useState(0);
   const [dur, setDur] = useState(0);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 60);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     const a = audioRef.current;
@@ -66,7 +74,8 @@ export function StickyPlayer() {
   };
 
   const pct = dur ? (cur / dur) * 100 : 0;
-  const show = !dismissed;
+  // Hidden at the very top; slides in as soon as you scroll. Stays once playing.
+  const show = (scrolled || playing) && !dismissed;
 
   return (
     <AnimatePresence>

@@ -53,8 +53,11 @@ export type Release = {
   status: string;
   cover: string;
   listenUrl: string;
-  /** Spotify track id — powers the embedded player widget. */
+  /** Spotify track id — links to the full track. */
   spotifyTrackId?: string;
+  /** 30-second preview mp3 (from Spotify) for the custom inline player. */
+  previewUrl?: string;
+  artist?: string;
   featured?: boolean;
 };
 
@@ -63,12 +66,18 @@ export const RELEASES: Release[] = [
     title: "One Last Breath",
     type: "Single",
     status: "Out Now",
+    artist: "Roots In Blue Stone",
     cover: "/img/one-last-breath.jpg",
     listenUrl: "https://artists.landr.com/057914992419",
     spotifyTrackId: "2bLFDKSspU5NvQ4EwDxrA1",
+    previewUrl:
+      "https://p.scdn.co/mp3-preview/5bddbe3783e6a759a557e6dacff417a1713f1350",
     featured: true,
   },
 ];
+
+export const spotifyTrackUrl = (id: string) =>
+  `https://open.spotify.com/track/${id}`;
 
 /** Originals worth highlighting. */
 export const ORIGINALS = ["Carry On", "No Pasta In The Hot Tub", "One Last Breath"];

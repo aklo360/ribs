@@ -3,9 +3,9 @@
 import { motion } from "motion/react";
 import { CalendarDays, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { SmartImage } from "./smart-image";
 import { SocialLinks } from "./social-links";
+import { ReleasePlayer } from "./release-player";
 import { SITE, HERO_IMAGE, RELEASES } from "@/lib/content";
 
 export function Hero() {
@@ -37,18 +37,6 @@ export function Hero() {
           <h1 className="sr-only">
             {SITE.name} — {SITE.tagline}
           </h1>
-
-          <div className="mb-6 flex flex-wrap items-center gap-2">
-            {SITE.genres.map((g) => (
-              <Badge
-                key={g}
-                variant="secondary"
-                className="rounded-full bg-white/[0.06] px-3 py-1 text-xs font-medium tracking-wide text-foreground/70"
-              >
-                {g}
-              </Badge>
-            ))}
-          </div>
 
           {/* Logo wordmark */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -85,32 +73,15 @@ export function Hero() {
           <SocialLinks className="mt-10" />
         </motion.div>
 
-        {/* Right column — live Spotify player for the latest release */}
-        {latest?.spotifyTrackId && (
+        {/* Right column — minimal inline player for the latest release */}
+        {latest?.previewUrl && (
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             className="mx-auto w-full max-w-[336px] lg:mx-0 lg:ml-auto"
           >
-            <div className="mb-3 flex items-center gap-2 px-1">
-              <span className="size-1.5 rounded-full bg-foreground/70" />
-              <span className="font-mono text-[0.65rem] uppercase tracking-[0.28em] text-foreground/55">
-                Latest Release
-              </span>
-            </div>
-            <div className="overflow-hidden rounded-xl shadow-[0_28px_70px_-24px_rgba(0,0,0,0.9)] ring-1 ring-white/10">
-              <iframe
-                title={`${latest.title} on Spotify`}
-                src={`https://open.spotify.com/embed/track/${latest.spotifyTrackId}?utm_source=generator&theme=0`}
-                width="100%"
-                height="352"
-                loading="lazy"
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                className="block w-full"
-                style={{ border: 0 }}
-              />
-            </div>
+            <ReleasePlayer release={latest} />
           </motion.div>
         )}
       </div>

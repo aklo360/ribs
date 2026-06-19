@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { CalendarDays, Send, Play } from "lucide-react";
+import { CalendarDays, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SmartImage } from "./smart-image";
@@ -85,46 +85,35 @@ export function Hero() {
           <SocialLinks className="mt-10" />
         </motion.div>
 
-        {/* Right column — floating album cover */}
-        {latest && (
-          <motion.a
-            href="#music"
+        {/* Right column — live Spotify player for the latest release */}
+        {latest?.spotifyTrackId && (
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="group relative mx-auto w-full max-w-[300px] lg:mx-0 lg:ml-auto"
+            className="mx-auto w-full max-w-[340px] lg:mx-0 lg:ml-auto"
           >
-            <motion.div
-              animate={{ y: [0, -12, 0] }}
-              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-              className="glass-raised rotate-[-3deg] rounded-3xl p-3 transition-transform duration-500 group-hover:rotate-0"
-            >
-              <p className="mb-3 px-1 font-mono text-[0.65rem] uppercase tracking-[0.25em] text-foreground/60">
-                Latest Release
-              </p>
-              <div className="relative overflow-hidden rounded-[6px]">
-                <SmartImage
-                  src={latest.cover}
-                  alt={`${latest.title} cover art`}
-                  seed={1}
-                  className="aspect-square w-full object-cover"
-                />
-                <span className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover:opacity-100">
-                  <span className="flex size-14 items-center justify-center rounded-full bg-white text-black">
-                    <Play className="size-6 translate-x-0.5 fill-current" />
-                  </span>
+            <div className="glass-raised rounded-2xl p-3">
+              <p className="mb-2.5 flex items-center justify-between px-1">
+                <span className="font-mono text-[0.65rem] uppercase tracking-[0.25em] text-foreground/60">
+                  Latest Release
                 </span>
-              </div>
-              <div className="flex items-baseline justify-between px-1 pt-3">
-                <p className="font-display text-lg font-bold tracking-tight">
-                  {latest.title}
-                </p>
-                <p className="font-mono text-[0.65rem] uppercase tracking-widest text-foreground/55">
+                <span className="font-mono text-[0.65rem] uppercase tracking-widest text-foreground/45">
                   {latest.status}
-                </p>
-              </div>
-            </motion.div>
-          </motion.a>
+                </span>
+              </p>
+              <iframe
+                title={`${latest.title} on Spotify`}
+                src={`https://open.spotify.com/embed/track/${latest.spotifyTrackId}?utm_source=generator&theme=0`}
+                width="100%"
+                height="352"
+                loading="lazy"
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                className="w-full rounded-xl"
+                style={{ border: 0 }}
+              />
+            </div>
+          </motion.div>
         )}
       </div>
     </section>

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { SmartImage } from "./smart-image";
 import { SocialLinks } from "./social-links";
 import { AppleMusicIcon } from "./icons";
+import { TiltCard } from "./tilt-card";
 import { SITE, HERO_IMAGE, RELEASES } from "@/lib/content";
 
 export function Hero() {
@@ -87,24 +88,26 @@ export function Hero() {
                 Latest Release
               </span>
             </div>
-            <a
-              href={latest.appleMusicUrl ?? latest.listenUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative block overflow-hidden rounded-lg ring-1 ring-white/10 shadow-[0_28px_70px_-24px_rgba(0,0,0,0.9)]"
-            >
-              <SmartImage
-                src={latest.cover}
-                alt={`${latest.title} cover art`}
-                seed={1}
-                label={latest.title}
-                className="aspect-square w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-              />
-              <span className="absolute inset-x-0 bottom-0 flex items-center gap-2 bg-gradient-to-t from-black/80 to-transparent p-4 pt-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                <AppleMusicIcon className="size-4" />
-                <span className="text-sm font-medium">Listen on Apple Music</span>
-              </span>
-            </a>
+            <TiltCard>
+              <a
+                href={latest.appleMusicUrl ?? latest.listenUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative block overflow-hidden rounded-lg ring-1 ring-white/10 shadow-[0_28px_70px_-24px_rgba(0,0,0,0.9)]"
+              >
+                <SmartImage
+                  src={latest.cover}
+                  alt={`${latest.title} cover art`}
+                  seed={1}
+                  label={latest.title}
+                  className="aspect-square w-full object-cover"
+                />
+                <span className="absolute inset-x-0 bottom-0 flex items-center gap-2 bg-gradient-to-t from-black/80 to-transparent p-4 pt-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                  <AppleMusicIcon className="size-4" />
+                  <span className="text-sm font-medium">Listen on Apple Music</span>
+                </span>
+              </a>
+            </TiltCard>
             <div className="mt-3 flex items-baseline justify-between px-0.5">
               <p className="font-display text-lg font-bold tracking-tight">
                 {latest.title}

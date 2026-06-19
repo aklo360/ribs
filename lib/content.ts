@@ -55,6 +55,8 @@ export type Release = {
   listenUrl: string;
   /** Spotify track id — links to the full track. */
   spotifyTrackId?: string;
+  /** Apple Music track link. */
+  appleMusicUrl?: string;
   /** 30-second preview mp3 (from Spotify) for the custom inline player. */
   previewUrl?: string;
   artist?: string;
@@ -69,6 +71,8 @@ export const RELEASES: Release[] = [
     artist: "Roots In Blue Stone",
     cover: "/img/one-last-breath.jpg",
     listenUrl: "https://artists.landr.com/057914992419",
+    appleMusicUrl:
+      "https://music.apple.com/us/album/one-last-breath/1881358433?i=1881358434",
     spotifyTrackId: "2bLFDKSspU5NvQ4EwDxrA1",
     previewUrl:
       "https://p.scdn.co/mp3-preview/5bddbe3783e6a759a557e6dacff417a1713f1350",

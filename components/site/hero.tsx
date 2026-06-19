@@ -91,17 +91,15 @@ export function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="mx-auto w-full max-w-[340px] lg:mx-0 lg:ml-auto"
+            className="mx-auto w-full max-w-[336px] lg:mx-0 lg:ml-auto"
           >
-            <div className="glass-raised rounded-2xl p-3">
-              <p className="mb-2.5 flex items-center justify-between px-1">
-                <span className="font-mono text-[0.65rem] uppercase tracking-[0.25em] text-foreground/60">
-                  Latest Release
-                </span>
-                <span className="font-mono text-[0.65rem] uppercase tracking-widest text-foreground/45">
-                  {latest.status}
-                </span>
-              </p>
+            <div className="mb-3 flex items-center gap-2 px-1">
+              <span className="size-1.5 rounded-full bg-foreground/70" />
+              <span className="font-mono text-[0.65rem] uppercase tracking-[0.28em] text-foreground/55">
+                Latest Release
+              </span>
+            </div>
+            <div className="overflow-hidden rounded-xl shadow-[0_28px_70px_-24px_rgba(0,0,0,0.9)] ring-1 ring-white/10">
               <iframe
                 title={`${latest.title} on Spotify`}
                 src={`https://open.spotify.com/embed/track/${latest.spotifyTrackId}?utm_source=generator&theme=0`}
@@ -109,7 +107,7 @@ export function Hero() {
                 height="352"
                 loading="lazy"
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                className="w-full rounded-xl"
+                className="block w-full"
                 style={{ border: 0 }}
               />
             </div>

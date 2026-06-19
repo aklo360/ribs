@@ -7,6 +7,7 @@ import { Gallery } from "@/components/site/gallery";
 import { Video } from "@/components/site/video";
 import { BookingSection } from "@/components/site/booking-section";
 import { Footer } from "@/components/site/footer";
+import { StickyPlayer } from "@/components/site/sticky-player";
 
 export default function Home() {
   return (
@@ -22,6 +23,7 @@ export default function Home() {
         <BookingSection />
       </main>
       <Footer />
+      <StickyPlayer />
     </>
   );
 }

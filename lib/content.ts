@@ -7,6 +7,7 @@ export const SITE = {
   name: "Roots in Blue Stone",
   short: "RIBS",
   tagline: "Originals & Covers. Groove, Grit & Good Vibes.",
+  taglineLines: ["Originals & Covers.", "Groove, Grit & Good Vibes."],
   // Verbatim opening line of their bio.
   description:
     "Roots in Blue Stone is a Pennsylvania-born band blending reggae, rock, blues, and soul into a sound that feels both familiar and fresh.",

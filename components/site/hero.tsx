@@ -47,9 +47,11 @@ export function Hero() {
             className="w-[290px] max-w-full drop-shadow-[0_4px_30px_rgba(0,0,0,0.7)] sm:w-[380px] md:w-[460px] lg:w-[520px]"
           />
 
-          <p className="mt-6 max-w-md font-mono text-sm uppercase tracking-[0.18em] text-foreground/65 sm:text-base">
-            {SITE.tagline}
-          </p>
+          <div className="mt-6 space-y-0.5 font-mono text-sm uppercase tracking-[0.18em] text-foreground/65 sm:text-base">
+            {SITE.taglineLines.map((line) => (
+              <p key={line}>{line}</p>
+            ))}
+          </div>
 
           <div className="mt-9 flex flex-wrap gap-3">
             <Button

@@ -21,6 +21,8 @@ export const SITE = {
   dusk: "https://dusk.fm/@rootsinbluestone",
   duskRating: "5.0",
   duskReviews: 11,
+  // Bandsintown artist page (follow / request a show).
+  bandsintown: "https://www.bandsintown.com/a/15511983",
 } as const;
 
 export const BIO = [

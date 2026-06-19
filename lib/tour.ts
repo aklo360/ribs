@@ -1,14 +1,16 @@
 /**
- * Tour dates. Edit this list to add/remove shows.
- * The current Wix site has no populated tour list, so this is seeded with the
- * one known upcoming show. Set status to "soldout" / "cancelled" as needed.
+ * Tour dates — real shows from the band's Bandsintown (artist 15511983).
+ * Update by editing this list; "Notify Me" / RSVP links point to each
+ * Bandsintown event page.
  */
 
 export type ShowStatus = "onsale" | "soldout" | "free" | "announced" | "cancelled";
 
 export type Show = {
-  /** ISO date, e.g. "2026-04-10" */
+  /** ISO start date, e.g. "2026-06-21" */
   date: string;
+  /** ISO end date for multi-day events */
+  endDate?: string;
   venue: string;
   city: string;
   region?: string;
@@ -18,48 +20,24 @@ export type Show = {
   note?: string;
 };
 
-export const SHOWS: Show[] = [
-  // Real show carried over from the current site (kept for history; it is in the
-  // past, so it is filtered out of the upcoming list automatically).
-  {
-    date: "2026-04-10",
-    venue: "The Sherman Theater",
-    city: "Stroudsburg",
-    region: "PA",
-    lineup: "Full Band",
-    status: "onsale",
-    note: "Sherman Showcase",
-    ticketUrl:
-      "https://www.etix.com/ticket/p/85429322/roots-in-blue-stone-stroudsburg-sherman-showcase?partner_id=5591&utm_source=Showcase&utm_medium=Headliner&utm_campaign=RootsInBlueStone26",
-  },
+const E = (id: string) => `https://www.bandsintown.com/e/${id}`;
 
-  // ⚠️ PLACEHOLDER DATES — replace with real shows before launch.
-  // These exist only so the Tour section demonstrates its design. They use
-  // status "announced" (no ticket links) so nothing fake is presented as on-sale.
-  {
-    date: "2026-07-18",
-    venue: "Mauch Chunk Opera House",
-    city: "Jim Thorpe",
-    region: "PA",
-    lineup: "Full Band",
-    status: "announced",
-  },
-  {
-    date: "2026-08-09",
-    venue: "Stone & Hammer Brewing",
-    city: "Lake Harmony",
-    region: "PA",
-    lineup: "5-Piece",
-    status: "announced",
-  },
-  {
-    date: "2026-09-05",
-    venue: "Pocono Roots Festival",
-    city: "Stroudsburg",
-    region: "PA",
-    lineup: "7-Piece",
-    status: "announced",
-  },
+export const SHOWS: Show[] = [
+  { date: "2026-06-21", venue: "National Go Skate Day", city: "Williamsburg", region: "NY", status: "onsale", ticketUrl: E("108104578") },
+  { date: "2026-06-27", endDate: "2026-06-28", venue: "Finola's", city: "Stroudsburg", region: "PA", status: "onsale", ticketUrl: E("107999186") },
+  { date: "2026-06-28", venue: "The Sandbox", city: "Highlands", region: "NJ", status: "onsale", ticketUrl: E("107919896") },
+  { date: "2026-07-04", venue: "Ladder 15", city: "Philadelphia", region: "PA", status: "onsale", ticketUrl: E("107999203") },
+  { date: "2026-07-10", venue: "The Sandbox", city: "Highlands", region: "NJ", status: "onsale", ticketUrl: E("107919898") },
+  { date: "2026-07-18", venue: "One Earth", city: "Bethlehem", region: "PA", lineup: "Acoustic", status: "onsale", ticketUrl: E("107999221") },
+  { date: "2026-07-25", venue: "Jam Below The Dam", city: "White Haven", region: "PA", status: "onsale", ticketUrl: E("107919906") },
+  { date: "2026-08-01", endDate: "2026-08-02", venue: "Finola's", city: "Stroudsburg", region: "PA", status: "onsale", ticketUrl: E("107999237") },
+  { date: "2026-08-14", venue: "The Sandbox", city: "Highlands", region: "NJ", status: "onsale", ticketUrl: E("107919910") },
+  { date: "2026-08-15", venue: "Jubilee", city: "Pocono Pines", region: "PA", status: "onsale", ticketUrl: E("107481646") },
+  { date: "2026-08-29", venue: "Edgewater", city: "Sea Bright", region: "NJ", note: "RIBS & The Rub", status: "onsale", ticketUrl: E("108104562") },
+  { date: "2026-09-04", venue: "Warrior Bar & Grill", city: "Stroudsburg", region: "PA", status: "onsale", ticketUrl: E("107806622") },
+  { date: "2026-09-26", endDate: "2026-09-27", venue: "Finola's", city: "Stroudsburg", region: "PA", status: "onsale", ticketUrl: E("107999247") },
+  { date: "2026-11-14", venue: "Jubilee", city: "Pocono Pines", region: "PA", status: "onsale", ticketUrl: E("107481648") },
+  { date: "2026-12-19", venue: "Ladder 15", city: "Philadelphia", region: "PA", status: "onsale", ticketUrl: E("107919913") },
 ];
 
 /** Shows today or later, sorted soonest-first. */
@@ -69,9 +47,9 @@ export function upcomingShows(now: Date = new Date()): Show[] {
     now.getMonth(),
     now.getDate()
   ).getTime();
-  return SHOWS.filter((s) => new Date(s.date).getTime() >= startOfToday).sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-  );
+  return SHOWS.filter(
+    (s) => new Date(`${s.endDate ?? s.date}T12:00:00`).getTime() >= startOfToday
+  ).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 }
 
 export function formatShowDate(iso: string): {

@@ -6,48 +6,42 @@ import { z } from "zod";
  */
 
 export const INQUIRER_TYPES = [
-  "Talent Buyer",
   "Venue / Promoter",
-  "Private Event",
-  "Wedding",
-  "Corporate",
-  "Festival",
+  "Event Planner",
+  "Private Host",
   "Other",
 ] as const;
 
 export const EVENT_TYPES = [
-  "Festival",
-  "Club / Bar",
+  "Bar / Restaurant",
   "Winery / Brewery",
-  "Wedding",
   "Private Party",
   "Corporate Event",
-  "Fair / Fundraiser",
+  "Wedding",
+  "Festival / Fundraiser",
   "Other",
 ] as const;
 
 export const LINEUP_OPTIONS = [
   "Duo",
-  "Trio",
+  "4-Piece",
   "5-Piece",
   "7-Piece",
   "Not sure — recommend one",
 ] as const;
 
-export const REPERTOIRE_OPTIONS = ["Originals", "Covers", "Mix of both"] as const;
+export const REPERTOIRE_OPTIONS = ["Original Music", "Covers", "Mix of both"] as const;
 
-export const SET_LENGTH_OPTIONS = [
-  "45 min",
-  "1 hour",
-  "2 × 45 min",
-  "2 × 60 min",
-  "3+ hours",
-  "Flexible",
+export const SET_LENGTH_OPTIONS = ["2 hours", "3 hours"] as const;
+
+export const PROVIDED_OPTIONS = [
+  "Venue provides sound",
+  "Band provides PA / sound",
+  "Unsure",
 ] as const;
 
-export const PROVIDED_OPTIONS = ["Provided", "Band to provide", "Unsure"] as const;
-
 export const BACKLINE_ITEMS = [
+  "Will provide via email",
   "Full PA / Sound System",
   "Stage Monitors",
   "Drum Kit",
@@ -98,18 +92,27 @@ export const bookingSchema = z.object({
   // Performance
   lineup: z.enum(LINEUP_OPTIONS).optional(),
   setLength: z.enum(SET_LENGTH_OPTIONS).optional(),
+  customHours: z.preprocess(
+    (value) => {
+      if (value === "" || value === undefined || value === null) return undefined;
+      const number = Number(value);
+      return Number.isNaN(number) ? value : number;
+    },
+    z.number().int("Enter a whole number of hours").min(4, "Use custom hours for 4+").max(12, "Please add longer events in the notes").optional()
+  ),
   repertoire: z.enum(REPERTOIRE_OPTIONS).optional(),
 
   // Technical / backline
   soundProvided: z.enum(PROVIDED_OPTIONS).optional(),
-  soundEngineerNeeded: z.boolean().default(false),
   backline: z.array(z.string()).default([]),
   stageNotes: z.string().optional(),
   powerAvailable: z.boolean().default(false),
+  overheadCoverage: z.boolean().default(false),
 
   // Logistics & budget
   budget: z.enum(BUDGET_RANGES).optional(),
   travelLodging: z.boolean().default(false),
+  formalDress: z.boolean().default(false),
   message: z.string().optional(),
   heardFrom: z.enum(HEARD_OPTIONS).optional(),
 
@@ -129,11 +132,12 @@ export const bookingDefaults: Partial<BookingInput> = {
   region: "",
   venueName: "",
   audienceSize: "",
-  soundEngineerNeeded: false,
   backline: [],
   stageNotes: "",
   powerAvailable: false,
+  overheadCoverage: false,
   travelLodging: false,
+  formalDress: false,
   message: "",
   company_website: "",
 };

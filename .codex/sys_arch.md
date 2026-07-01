@@ -18,7 +18,9 @@ clients submit a detailed booking inquiry. A redesign of the existing Wix site.
 - `app/api/book/route.ts` — edge route; validates with `lib/booking-schema.ts`, emails via Resend, graceful no-op when unconfigured
 - `components/site/*` — page sections; `components/booking/booking-form.tsx` — 5-step form
 - `components/site/smart-image.tsx` — image with branded gradient fallback
+- `components/site/player-provider.tsx` — shared latest-release preview audio state used by the hero flip-card player and sticky footer player
 - `lib/content.ts` — band data, bio, members, releases, socials, gallery, hero image
+- `lib/booking-quote.ts` — shared booking estimate calculator used by the live form UI and booking email route
 - `lib/tour.ts` — tour dates + helpers (upcoming filter, date formatting); has PLACEHOLDER shows
 
 ## Configuration
@@ -30,6 +32,11 @@ clients submit a detailed booking inquiry. A redesign of the existing Wix site.
 - Staging (branch `staging`): https://staging.roots-in-blue-stone.pages.dev — LIVE.
 - Production (`main` branch → roots-in-blue-stone.pages.dev) and DNS cutover from Wix: approval-gated, not yet run.
 - Pages secrets needed for real emails: `RESEND_API_KEY`, `BOOKING_TO_EMAIL`, `BOOKING_FROM_EMAIL`. Project compat: `nodejs_compat`.
+
+## Media
+- Public gallery assets live under `public/gallery/`. Walter's Drive photo set is optimized under `public/gallery/walter/`, and a curated 100-image selection from the downloaded RIBS photo zips is optimized under `public/gallery/zips/`; both are appended to the carousel through `lib/content.ts`.
+- Raw downloaded Drive staging files may exist locally under `refs/walter-drive/`, but that folder is ignored by Git; use the optimized public assets for the shipped site.
+- Release artwork lives under `public/img/releases/`. `lib/content.ts` owns the release catalog; the hero uses the featured release in a flip-card player backed by the shared `PlayerProvider`, and `components/site/music.tsx` renders the single-column all-release carousel with preview players and per-release service buttons.
 
 ## GitHub
 - Remote: `git@github.com:aklo360/ribs.git` (private). Web: https://github.com/aklo360/ribs

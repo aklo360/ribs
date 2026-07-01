@@ -9,10 +9,11 @@ import { BookingSection } from "@/components/site/booking-section";
 import { Newsletter } from "@/components/site/newsletter";
 import { Footer } from "@/components/site/footer";
 import { StickyPlayer } from "@/components/site/sticky-player";
+import { PlayerProvider } from "@/components/site/player-provider";
 
 export default function Home() {
   return (
-    <>
+    <PlayerProvider>
       <SiteNav />
       <main>
         <Hero />
@@ -26,6 +27,6 @@ export default function Home() {
       </main>
       <Footer />
       <StickyPlayer />
-    </>
+    </PlayerProvider>
   );
 }

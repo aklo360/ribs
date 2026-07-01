@@ -7,9 +7,9 @@ import { SITE, BIO } from "@/lib/content";
 export function BookingSection() {
   return (
     <Section id="book" eyebrow="Bookings" title="Book the Band">
-      <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr]">
-        <Reveal>
-          <div className="flex flex-col gap-7">
+      <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
+        <Reveal className="min-w-0">
+          <div className="flex min-w-0 flex-col gap-7">
             {/* Verbatim line from the band's bio */}
             <blockquote className="border-l-2 border-white/20 pl-5 font-display text-xl font-semibold leading-snug tracking-tight text-foreground/90 sm:text-2xl">
               “{BIO[2]}”
@@ -44,7 +44,7 @@ export function BookingSection() {
           </div>
         </Reveal>
 
-        <Reveal delay={0.1}>
+        <Reveal delay={0.1} className="min-w-0">
           <BookingForm />
         </Reveal>
       </div>

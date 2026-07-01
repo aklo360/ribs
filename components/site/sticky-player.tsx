@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Play, Pause, X } from "lucide-react";
 import { SmartImage } from "./smart-image";
 import { SpotifyIcon, AppleMusicIcon } from "./icons";
-import { RELEASES, spotifyTrackUrl } from "@/lib/content";
+import { spotifyTrackUrl } from "@/lib/content";
+import { usePlayer } from "./player-provider";
 
 function fmt(s: number) {
   if (!isFinite(s)) return "0:00";
@@ -19,13 +20,19 @@ function fmt(s: number) {
  * follows you down the page. Plays the track's 30s preview.
  */
 export function StickyPlayer() {
-  const release = RELEASES.find((r) => r.featured) ?? RELEASES[0];
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const {
+    release,
+    playing,
+    currentTime,
+    progress,
+    dismissed,
+    toggle,
+    pause,
+    dismiss,
+    seekToRatio,
+  } = usePlayer();
   const [scrolled, setScrolled] = useState(false);
-  const [dismissed, setDismissed] = useState(false);
-  const [playing, setPlaying] = useState(false);
-  const [cur, setCur] = useState(0);
-  const [dur, setDur] = useState(0);
+  const [musicVisible, setMusicVisible] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -35,47 +42,31 @@ export function StickyPlayer() {
   }, []);
 
   useEffect(() => {
-    const a = audioRef.current;
-    if (!a) return;
-    const onTime = () => setCur(a.currentTime);
-    const onMeta = () => setDur(a.duration || 0);
-    const onEnd = () => {
-      setPlaying(false);
-      setCur(0);
-    };
-    a.addEventListener("timeupdate", onTime);
-    a.addEventListener("loadedmetadata", onMeta);
-    a.addEventListener("ended", onEnd);
-    return () => {
-      a.removeEventListener("timeupdate", onTime);
-      a.removeEventListener("loadedmetadata", onMeta);
-      a.removeEventListener("ended", onEnd);
-    };
+    const music = document.getElementById("music");
+    if (!music) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setMusicVisible(entry.isIntersecting),
+      { threshold: 0.15 }
+    );
+
+    observer.observe(music);
+    return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (!musicVisible) return;
+    pause();
+  }, [musicVisible, pause]);
 
   if (!release?.previewUrl) return null;
 
-  const toggle = () => {
-    const a = audioRef.current;
-    if (!a) return;
-    if (playing) {
-      a.pause();
-      setPlaying(false);
-    } else {
-      a.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
-    }
-  };
-
   const seek = (e: React.MouseEvent<HTMLDivElement>) => {
-    const a = audioRef.current;
-    if (!a || !dur) return;
     const rect = e.currentTarget.getBoundingClientRect();
-    a.currentTime = ((e.clientX - rect.left) / rect.width) * dur;
+    seekToRatio((e.clientX - rect.left) / rect.width);
   };
-
-  const pct = dur ? (cur / dur) * 100 : 0;
   // Hidden at the very top; slides in as soon as you scroll. Stays once playing.
-  const show = (scrolled || playing) && !dismissed;
+  const show = (scrolled || playing) && !dismissed && !musicVisible;
 
   return (
     <AnimatePresence>
@@ -122,19 +113,22 @@ export function StickyPlayer() {
                 >
                   <div
                     className="h-full rounded-full bg-white transition-[width] duration-150"
-                    style={{ width: `${pct}%` }}
+                    style={{ width: `${progress}%` }}
                   />
                 </div>
                 <span className="font-mono text-[10px] tabular-nums text-foreground/45">
-                  {fmt(cur)}
+                  {fmt(currentTime)}
                 </span>
               </div>
             </div>
 
             <div className="hidden items-center gap-1 sm:flex">
-              {release.spotifyTrackId && (
+              {(release.spotifyUrl || release.spotifyTrackId) && (
                 <a
-                  href={spotifyTrackUrl(release.spotifyTrackId)}
+                  href={
+                    release.spotifyUrl ??
+                    (release.spotifyTrackId ? spotifyTrackUrl(release.spotifyTrackId) : "#")
+                  }
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Open in Spotify"
@@ -160,19 +154,13 @@ export function StickyPlayer() {
 
             <button
               type="button"
-              onClick={() => {
-                audioRef.current?.pause();
-                setPlaying(false);
-                setDismissed(true);
-              }}
+              onClick={dismiss}
               aria-label="Dismiss player"
               className="grid size-8 shrink-0 place-items-center rounded-full text-foreground/40 transition-colors hover:text-foreground/80"
             >
               <X className="size-4" />
             </button>
           </div>
-
-          <audio ref={audioRef} src={release.previewUrl} preload="none" />
         </motion.div>
       )}
     </AnimatePresence>

@@ -55,6 +55,11 @@ export type Release = {
   status: string;
   cover: string;
   listenUrl: string;
+  releaseDate?: string;
+  genre?: string;
+  trackCount?: number;
+  /** Direct Spotify release link when the public smart link resolves to an album/single. */
+  spotifyUrl?: string;
   /** Spotify track id — links to the full track. */
   spotifyTrackId?: string;
   /** Apple Music track link. */
@@ -63,22 +68,258 @@ export type Release = {
   previewUrl?: string;
   artist?: string;
   featured?: boolean;
+  platforms?: { key: StreamPlatform; label: string; url: string }[];
 };
 
 export const RELEASES: Release[] = [
   {
-    title: "One Last Breath",
+    title: "Break Down",
     type: "Single",
     status: "Out Now",
     artist: "Roots In Blue Stone",
-    cover: "/img/one-last-breath.jpg",
+    cover: "/img/releases/break-down.jpg",
+    listenUrl: "https://artists.landr.com/991043489351",
+    releaseDate: "May 15, 2026",
+    genre: "Reggae",
+    trackCount: 1,
+    spotifyUrl: "https://open.spotify.com/album/5xWSR0v7f6xIItn0tVemTR",
+    appleMusicUrl:
+      "https://music.apple.com/us/album/break-down/1893378207?i=1893378208",
+    previewUrl:
+      "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/7f/40/aa/7f40aa55-151c-17a7-df73-e5578c47e335/mzaf_2258306462090876051.plus.aac.p.m4a",
+    featured: true,
+    platforms: [
+      { key: "spotify", label: "Spotify", url: "https://open.spotify.com/album/5xWSR0v7f6xIItn0tVemTR" },
+      {
+        key: "appleMusic",
+        label: "Apple Music",
+        url: "https://music.apple.com/us/album/break-down/1893378207?i=1893378208",
+      },
+      {
+        key: "youtubeMusic",
+        label: "YouTube Music",
+        url: "https://music.youtube.com/playlist?list=OLAK5uy_kWFPiOb5B78kuSUdp7h4CPQnFLAQ95qzA&src=Linkfire",
+      },
+      { key: "amazonMusic", label: "Amazon Music", url: "https://music.amazon.com/albums/B0GX7F3F3F" },
+      { key: "deezer", label: "Deezer", url: "https://www.deezer.com/album/961317131" },
+      { key: "tidal", label: "Tidal", url: "https://www.tidal.com/album/515846933" },
+      {
+        key: "pandora",
+        label: "Pandora",
+        url: "https://pandora.app.link/?$desktop_url=https%3A%2F%2Fwww.pandora.com%2Fartist%2Froots-in-blue-stone%2Fbreak-down%2FALKclgvxx5dZtxw",
+      },
+    ],
+  },
+  {
+    title: "One Last Breath",
+    type: "Single",
+    status: "2026",
+    artist: "Roots In Blue Stone",
+    cover: "/img/releases/one-last-breath.jpg",
     listenUrl: "https://artists.landr.com/057914992419",
+    releaseDate: "March 13, 2026",
+    genre: "Reggae",
+    trackCount: 1,
     appleMusicUrl:
       "https://music.apple.com/us/album/one-last-breath/1881358433?i=1881358434",
-    spotifyTrackId: "2bLFDKSspU5NvQ4EwDxrA1",
     previewUrl:
-      "https://p.scdn.co/mp3-preview/5bddbe3783e6a759a557e6dacff417a1713f1350",
-    featured: true,
+      "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/79/4a/97/794a97c8-65fc-328f-1465-e94b70066aef/mzaf_9881931032731391950.plus.aac.p.m4a",
+    platforms: [
+      {
+        key: "appleMusic",
+        label: "Apple Music",
+        url: "https://music.apple.com/us/album/one-last-breath/1881358433?i=1881358434",
+      },
+      {
+        key: "spotify",
+        label: "Spotify",
+        url: "https://open.spotify.com/search/Roots%20In%20Blue%20Stone%20One%20Last%20Breath",
+      },
+    ],
+  },
+  {
+    title: "Santa Claus Is Coming To Town",
+    type: "Single",
+    status: "2025",
+    artist: "Roots In Blue Stone",
+    cover: "/img/releases/santa-claus.jpg",
+    listenUrl:
+      "https://music.apple.com/us/album/santa-claus-is-coming-to-town/1859104655?i=1859104656",
+    releaseDate: "December 12, 2025",
+    genre: "Holiday",
+    trackCount: 1,
+    appleMusicUrl:
+      "https://music.apple.com/us/album/santa-claus-is-coming-to-town/1859104655?i=1859104656",
+    previewUrl:
+      "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/ca/04/31/ca04319a-0dea-d0dc-36bd-cf167cb365dc/mzaf_1705035738401305258.plus.aac.p.m4a",
+    platforms: [
+      {
+        key: "appleMusic",
+        label: "Apple Music",
+        url: "https://music.apple.com/us/album/santa-claus-is-coming-to-town/1859104655?i=1859104656",
+      },
+      {
+        key: "spotify",
+        label: "Spotify",
+        url: "https://open.spotify.com/search/Roots%20In%20Blue%20Stone%20Santa%20Claus%20Is%20Coming%20To%20Town",
+      },
+    ],
+  },
+  {
+    title: "Carry On",
+    type: "Single",
+    status: "2025",
+    artist: "Roots In Blue Stone & Karen Meeks",
+    cover: "/img/releases/carry-on.jpg",
+    listenUrl: "https://music.apple.com/us/album/carry-on/1879619643?i=1879619644",
+    releaseDate: "November 7, 2025",
+    genre: "Blues-Rock",
+    trackCount: 1,
+    appleMusicUrl:
+      "https://music.apple.com/us/album/carry-on/1879619643?i=1879619644",
+    previewUrl:
+      "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/bc/33/c9/bc33c9f5-21c2-14ff-3858-e2dba7ba6c63/mzaf_14956381374265267115.plus.aac.p.m4a",
+    platforms: [
+      {
+        key: "appleMusic",
+        label: "Apple Music",
+        url: "https://music.apple.com/us/album/carry-on/1879619643?i=1879619644",
+      },
+      {
+        key: "spotify",
+        label: "Spotify",
+        url: "https://open.spotify.com/search/Roots%20In%20Blue%20Stone%20Carry%20On%20Karen%20Meeks",
+      },
+    ],
+  },
+  {
+    title: "No Pasta in the Hot Tub",
+    type: "Single",
+    status: "2024",
+    artist: "Roots In Blue Stone",
+    cover: "/img/releases/no-pasta.jpg",
+    listenUrl:
+      "https://music.apple.com/us/album/no-pasta-in-the-hot-tub/1879617113?i=1879617114",
+    releaseDate: "May 3, 2024",
+    genre: "Reggae",
+    trackCount: 1,
+    spotifyUrl: "https://open.spotify.com/album/7ETEDXLGwdV5B8AfAsopuh",
+    appleMusicUrl:
+      "https://music.apple.com/us/album/no-pasta-in-the-hot-tub/1879617113?i=1879617114",
+    previewUrl:
+      "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/e7/a9/64/e7a96442-84bb-0f41-1457-1edfa042099d/mzaf_636668177970828951.plus.aac.p.m4a",
+    platforms: [
+      { key: "spotify", label: "Spotify", url: "https://open.spotify.com/album/7ETEDXLGwdV5B8AfAsopuh" },
+      {
+        key: "appleMusic",
+        label: "Apple Music",
+        url: "https://music.apple.com/us/album/no-pasta-in-the-hot-tub/1879617113?i=1879617114",
+      },
+    ],
+  },
+  {
+    title: "One Day",
+    type: "Single",
+    status: "2023",
+    artist: "Roots In Blue Stone",
+    cover: "/img/releases/one-day.jpg",
+    listenUrl: "https://music.apple.com/us/album/one-day/1879618804?i=1879618806",
+    releaseDate: "March 17, 2023",
+    genre: "Reggae",
+    trackCount: 1,
+    spotifyUrl: "https://open.spotify.com/album/3Ca4RZYC9iLTVMA1AcdVwI",
+    appleMusicUrl:
+      "https://music.apple.com/us/album/one-day/1879618804?i=1879618806",
+    previewUrl:
+      "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/ce/89/c3/ce89c390-3c21-a13c-46be-9ca42ea22820/mzaf_1536731405768686779.plus.aac.p.m4a",
+    platforms: [
+      { key: "spotify", label: "Spotify", url: "https://open.spotify.com/album/3Ca4RZYC9iLTVMA1AcdVwI" },
+      {
+        key: "appleMusic",
+        label: "Apple Music",
+        url: "https://music.apple.com/us/album/one-day/1879618804?i=1879618806",
+      },
+    ],
+  },
+  {
+    title: "Borrowed Time",
+    type: "Single",
+    status: "2023",
+    artist: "Roots In Blue Stone",
+    cover: "/img/releases/borrowed-time.jpg",
+    listenUrl:
+      "https://music.apple.com/us/album/borrowed-time/1879617331?i=1879617332",
+    releaseDate: "February 10, 2023",
+    genre: "Blues-Rock",
+    trackCount: 1,
+    appleMusicUrl:
+      "https://music.apple.com/us/album/borrowed-time/1879617331?i=1879617332",
+    previewUrl:
+      "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/4c/e8/67/4ce86751-5857-962b-9970-4aa89474e6b5/mzaf_8454744426382212358.plus.aac.p.m4a",
+    platforms: [
+      {
+        key: "appleMusic",
+        label: "Apple Music",
+        url: "https://music.apple.com/us/album/borrowed-time/1879617331?i=1879617332",
+      },
+      {
+        key: "spotify",
+        label: "Spotify",
+        url: "https://open.spotify.com/search/Roots%20In%20Blue%20Stone%20Borrowed%20Time",
+      },
+    ],
+  },
+  {
+    title: "Amaranthus",
+    type: "Single",
+    status: "2023",
+    artist: "Roots In Blue Stone",
+    cover: "/img/releases/amaranthus.jpg",
+    listenUrl: "https://music.apple.com/us/album/amaranthus/1879625243?i=1879625244",
+    releaseDate: "January 12, 2023",
+    genre: "Contemporary Folk",
+    trackCount: 1,
+    spotifyUrl: "https://open.spotify.com/album/31LZHhbWmlvw65rKHsas5c",
+    appleMusicUrl:
+      "https://music.apple.com/us/album/amaranthus/1879625243?i=1879625244",
+    previewUrl:
+      "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/78/d7/ff/78d7ff7e-a622-eede-dc3a-4bee47721e52/mzaf_6729430746823838564.plus.aac.p.m4a",
+    platforms: [
+      { key: "spotify", label: "Spotify", url: "https://open.spotify.com/album/31LZHhbWmlvw65rKHsas5c" },
+      {
+        key: "appleMusic",
+        label: "Apple Music",
+        url: "https://music.apple.com/us/album/amaranthus/1879625243?i=1879625244",
+      },
+    ],
+  },
+  {
+    title: "Live At the Hall Castle Inn",
+    type: "Album",
+    status: "2022",
+    artist: "Roots In Blue Stone",
+    cover: "/img/releases/live-at-hall-castle-inn.jpg",
+    listenUrl:
+      "https://music.apple.com/us/album/live-at-the-hall-castle-inn/1654453556",
+    releaseDate: "November 10, 2022",
+    genre: "Folk",
+    trackCount: 6,
+    appleMusicUrl:
+      "https://music.apple.com/us/album/live-at-the-hall-castle-inn/1654453556",
+    previewUrl:
+      "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/76/b1/9f/76b19f44-5fc5-2479-b054-3c7ce62ed89b/mzaf_17621078082750025940.plus.aac.p.m4a",
+    platforms: [
+      {
+        key: "appleMusic",
+        label: "Apple Music",
+        url: "https://music.apple.com/us/album/live-at-the-hall-castle-inn/1654453556",
+      },
+      {
+        key: "spotify",
+        label: "Spotify",
+        url: "https://open.spotify.com/search/Roots%20In%20Blue%20Stone%20Live%20At%20The%20Hall%20Castle%20Inn",
+      },
+    ],
   },
 ];
 
@@ -99,38 +340,38 @@ export const STREAMING: { key: StreamPlatform; label: string; url: string }[] = 
   {
     key: "spotify",
     label: "Spotify",
-    url: "https://open.spotify.com/track/2bLFDKSspU5NvQ4EwDxrA1",
+    url: "https://open.spotify.com/album/5xWSR0v7f6xIItn0tVemTR",
   },
   {
     key: "appleMusic",
     label: "Apple Music",
-    url: "https://music.apple.com/us/album/1881358433?app=music&at=1l3vpUI&ct=LFV_ca8a6b4e0a4f3cb0bcf22c9be995105c&itscg=30440&itsct=catchall_p1&lId=215316995&cId=none&sr=1&src=Linkfire&ls=1",
+    url: "https://music.apple.com/us/album/break-down/1893378207?i=1893378208",
   },
   {
     key: "youtubeMusic",
     label: "YouTube Music",
-    url: "https://music.youtube.com/playlist?list=OLAK5uy_nXvtc9nB3qsGMsw_L3hzDr7cihtA5kfPI&src=Linkfire",
+    url: "https://music.youtube.com/playlist?list=OLAK5uy_kWFPiOb5B78kuSUdp7h4CPQnFLAQ95qzA&src=Linkfire",
   },
   {
     key: "amazonMusic",
     label: "Amazon Music",
-    url: "https://music.amazon.com/albums/B0GQQY678L?tag=linkfiregen&ie=UTF8&linkCode=as2&ascsubtag=ca8a6b4e0a4f3cb0bcf22c9be995105c",
+    url: "https://music.amazon.com/albums/B0GX7F3F3F",
   },
   {
     key: "deezer",
     label: "Deezer",
-    url: "https://www.deezer.com/album/930108651?app_id=140685&utm_source=partner_linkfire",
+    url: "https://www.deezer.com/album/961317131",
   },
-  { key: "tidal", label: "Tidal", url: "http://www.tidal.com/album/503352364" },
+  { key: "tidal", label: "Tidal", url: "https://www.tidal.com/album/515846933" },
   {
     key: "pandora",
     label: "Pandora",
-    url: "https://pandora.app.link/?$desktop_url=https%3A%2F%2Fwww.pandora.com%2Fartist%2Froots-in-blue-stone%2F1-last-breath%2FALn4khbmmkwjbJ9",
+    url: "https://pandora.app.link/?$desktop_url=https%3A%2F%2Fwww.pandora.com%2Fartist%2Froots-in-blue-stone%2Fbreak-down%2FALKclgvxx5dZtxw",
   },
 ];
 
 /** Originals worth highlighting. */
-export const ORIGINALS = ["Carry On", "No Pasta In The Hot Tub", "One Last Breath"];
+export const ORIGINALS = ["Carry On", "No Pasta In The Hot Tub", "One Last Breath", "Break Down"];
 
 export type SocialKey =
   | "spotify"
@@ -173,11 +414,21 @@ export const SOCIALS: Record<
 /** Spotify artist ID for the embedded player. */
 export const SPOTIFY_ARTIST_ID = "1MmtWj3eNt02HjmdiQVY2q";
 
-/** Photo gallery — real hi-res press/live shots from the current site. */
-export const GALLERY: string[] = Array.from(
-  { length: 19 },
-  (_, i) => `/gallery/g${String(i + 1).padStart(2, "0")}.jpg`
-);
+/** Photo gallery — real hi-res press/live shots from the site, Walter's Drive set, and downloaded RIBS photo zips. */
+export const GALLERY: string[] = [
+  ...Array.from(
+    { length: 19 },
+    (_, i) => `/gallery/g${String(i + 1).padStart(2, "0")}.jpg`
+  ),
+  ...Array.from(
+    { length: 13 },
+    (_, i) => `/gallery/walter/w${String(i + 1).padStart(2, "0")}.jpg`
+  ),
+  ...Array.from(
+    { length: 100 },
+    (_, i) => `/gallery/zips/ribs-zip-${String(i + 1).padStart(3, "0")}.jpg`
+  ),
+];
 
 /** YouTube uploads playlist (UC… channel id with the UC swapped for UU). */
 export const YOUTUBE_UPLOADS_PLAYLIST = "UUgPcbcspzKlnl7sej13vPoA";

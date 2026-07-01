@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   useForm,
   Controller,
+  useWatch,
   type Control,
   type Resolver,
+  type UseFormSetValue,
   type UseFormRegister,
   type FieldErrors,
 } from "react-hook-form";
@@ -16,8 +18,10 @@ import {
   ArrowLeft,
   ArrowRight,
   Check,
+  Info,
   Loader2,
   PartyPopper,
+  ReceiptText,
   Send,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -39,6 +43,7 @@ import {
   BUDGET_RANGES,
   HEARD_OPTIONS,
 } from "@/lib/booking-schema";
+import { estimateBookingQuote, type BookingQuoteEstimate } from "@/lib/booking-quote";
 
 /* ---------- small field primitives ---------- */
 
@@ -170,6 +175,7 @@ export function BookingForm() {
     handleSubmit,
     control,
     trigger,
+    setValue,
     formState: { errors },
   } = useForm<BookingInput>({
     resolver: zodResolver(bookingSchema) as unknown as Resolver<BookingInput>,
@@ -177,8 +183,20 @@ export function BookingForm() {
     mode: "onTouched",
   });
 
+  const quoteValues = useWatch({ control }) as Partial<BookingInput>;
+  const quote = estimateBookingQuote(quoteValues);
   const total = STEPS.length;
   const isLast = step === total - 1;
+
+  useEffect(() => {
+    if (
+      quoteValues.repertoire === "Original Music" &&
+      (quoteValues.setLength !== "2 hours" || quoteValues.customHours)
+    ) {
+      setValue("setLength", "2 hours", { shouldDirty: true, shouldValidate: true });
+      setValue("customHours", undefined, { shouldDirty: true, shouldValidate: true });
+    }
+  }, [quoteValues.customHours, quoteValues.repertoire, quoteValues.setLength, setValue]);
 
   async function next() {
     const fields = STEPS[step].fields as readonly (keyof BookingInput)[];
@@ -224,7 +242,9 @@ export function BookingForm() {
   }
 
   return (
-    <div className="glass-raised rounded-3xl p-5 sm:p-8">
+    <div className="glass-raised min-w-0 rounded-3xl p-5 sm:p-8">
+      <QuoteEstimate estimate={quote} />
+
       {/* Progress */}
       <div className="mb-7">
         <div className="mb-3 flex items-center justify-between text-sm">
@@ -271,7 +291,14 @@ export function BookingForm() {
             {step === 1 && (
               <Step2 register={register} control={control} errors={errors} />
             )}
-            {step === 2 && <Step3 register={register} control={control} />}
+            {step === 2 && (
+              <Step3
+                register={register}
+                control={control}
+                errors={errors}
+                setValue={setValue}
+              />
+            )}
             {step === 3 && <Step4 register={register} control={control} />}
             {step === 4 && <Step5 register={register} control={control} />}
           </motion.div>
@@ -315,12 +342,47 @@ export function BookingForm() {
   );
 }
 
+function QuoteEstimate({ estimate }: { estimate: BookingQuoteEstimate }) {
+  return (
+    <div className="mb-6 min-w-0 border-b border-white/10 pb-5">
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-center gap-2 text-sm font-semibold text-foreground/85">
+          <ReceiptText className="size-4 text-primary" />
+          Live estimate
+        </div>
+        <span className="font-display text-xl font-bold tracking-normal text-foreground sm:text-2xl">
+          {estimate.label}
+        </span>
+      </div>
+      <div className="mt-3 flex min-w-0 max-w-full items-start gap-2 overflow-x-auto pb-1 text-xs leading-relaxed text-foreground/55">
+        <Info className="mt-0.5 size-3.5 shrink-0 text-primary/80" />
+        <p className="shrink-0 whitespace-nowrap">
+          Estimate only; final quote follows logistics, production, travel, and event review.
+        </p>
+      </div>
+      {estimate.notes.length > 0 && (
+        <div className="mt-3 flex min-w-0 max-w-full gap-2 overflow-x-auto pb-1">
+          {estimate.notes.slice(0, 3).map((note) => (
+            <span
+              key={note}
+              className="shrink-0 whitespace-nowrap rounded-full border border-white/10 bg-black/20 px-3 py-1 text-xs text-foreground/55"
+            >
+              {note}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ---------- step bodies ---------- */
 
 type StepProps = {
   register: UseFormRegister<BookingInput>;
   control: Control<BookingInput>;
   errors?: FieldErrors<BookingInput>;
+  setValue?: UseFormSetValue<BookingInput>;
 };
 
 function Step1({ register, control, errors }: StepProps) {
@@ -354,6 +416,9 @@ function Step1({ register, control, errors }: StepProps) {
 }
 
 function Step2({ register, control, errors }: StepProps) {
+  const setting = useWatch({ control, name: "setting" });
+  const isOutdoor = setting === "Outdoor" || setting === "Both / Unsure";
+
   return (
     <>
       <Field label="Type of event">
@@ -408,11 +473,43 @@ function Step2({ register, control, errors }: StepProps) {
           )}
         />
       </Field>
+      {isOutdoor && (
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Controller
+            control={control}
+            name="overheadCoverage"
+            render={({ field }) => (
+              <Toggle
+                label="Overhead coverage / shade"
+                value={!!field.value}
+                onChange={field.onChange}
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="powerAvailable"
+            render={({ field }) => (
+              <Toggle
+                label="Power at performance location"
+                value={!!field.value}
+                onChange={field.onChange}
+              />
+            )}
+          />
+        </div>
+      )}
     </>
   );
 }
 
-function Step3({ control }: StepProps) {
+function Step3({ control, errors, setValue }: StepProps) {
+  const repertoire = useWatch({ control, name: "repertoire" });
+  const setLengthOptions =
+    repertoire === "Original Music"
+      ? (["2 hours"] as const)
+      : SET_LENGTH_OPTIONS;
+
   return (
     <>
       <Field label="Lineup size">
@@ -438,17 +535,58 @@ function Step3({ control }: StepProps) {
         />
       </Field>
       <Field label="Desired set length">
-        <Controller
-          control={control}
-          name="setLength"
-          render={({ field }) => (
-            <Pills
-              options={SET_LENGTH_OPTIONS}
-              value={field.value}
-              onChange={field.onChange}
+        <div className="flex flex-wrap items-center gap-2">
+          <Controller
+            control={control}
+            name="setLength"
+            render={({ field }) => (
+              <Pills
+                options={setLengthOptions}
+                value={field.value}
+                onChange={(value) => {
+                  field.onChange(value);
+                  setValue?.("customHours", undefined, {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  });
+                }}
+              />
+            )}
+          />
+          {repertoire !== "Original Music" && (
+            <Controller
+              control={control}
+              name="customHours"
+              render={({ field }) => (
+                <label className="inline-flex h-10 items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 text-sm font-medium text-foreground/70 transition-colors focus-within:border-primary/60 focus-within:bg-primary/10 focus-within:text-primary">
+                  <Input
+                    type="number"
+                    inputMode="numeric"
+                    min={4}
+                    max={12}
+                    step={1}
+                    aria-label="Custom performance hours"
+                    placeholder="4+"
+                    value={field.value ?? ""}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      field.onChange(value === "" ? undefined : Number(value));
+                      setValue?.("setLength", undefined, {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                      });
+                    }}
+                    className="h-7 w-12 border-0 bg-transparent p-0 text-center text-sm shadow-none focus-visible:ring-0"
+                  />
+                  <span>hours</span>
+                </label>
+              )}
             />
           )}
-        />
+        </div>
+        {errors?.customHours?.message && (
+          <p className="text-xs text-destructive">{errors.customHours.message}</p>
+        )}
       </Field>
     </>
   );
@@ -457,7 +595,7 @@ function Step3({ control }: StepProps) {
 function Step4({ register, control }: StepProps) {
   return (
     <>
-      <Field label="Sound system / PA">
+      <Field label="Will the band be providing sound reinforcement?">
         <Controller
           control={control}
           name="soundProvided"
@@ -480,30 +618,6 @@ function Step4({ register, control }: StepProps) {
           )}
         />
       </Field>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Controller
-          control={control}
-          name="soundEngineerNeeded"
-          render={({ field }) => (
-            <Toggle
-              label="Sound engineer needed"
-              value={!!field.value}
-              onChange={field.onChange}
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="powerAvailable"
-          render={({ field }) => (
-            <Toggle
-              label="Power available at stage"
-              value={!!field.value}
-              onChange={field.onChange}
-            />
-          )}
-        />
-      </div>
       <Field label="Stage size / load-in notes">
         <Textarea
           rows={3}
@@ -533,6 +647,17 @@ function Step5({ register, control }: StepProps) {
         render={({ field }) => (
           <Toggle
             label="Travel & lodging covered"
+            value={!!field.value}
+            onChange={field.onChange}
+          />
+        )}
+      />
+      <Controller
+        control={control}
+        name="formalDress"
+        render={({ field }) => (
+          <Toggle
+            label="Formal / upscale dress requirement"
             value={!!field.value}
             onChange={field.onChange}
           />

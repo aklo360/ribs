@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+refs/walter-drive/
 
 # debug
 npm-debug.log*

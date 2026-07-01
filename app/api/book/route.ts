@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { bookingSchema } from "@/lib/booking-schema";
+import { estimateBookingQuote } from "@/lib/booking-quote";
 
 // Edge-safe: uses only fetch + Web APIs, so it runs in dev and on Cloudflare Pages.
 export const runtime = "edge";
@@ -46,6 +47,8 @@ export async function POST(request: Request) {
   }
 
   const b = parsed.data;
+  const quote = estimateBookingQuote(b);
+  const performanceLength = b.customHours ? `${b.customHours} hours` : b.setLength;
 
   // Honeypot — silently accept bots without sending.
   if (b.company_website) {
@@ -73,15 +76,17 @@ export async function POST(request: Request) {
           ${row("Setting", b.setting)}
           ${row("Audience", b.audienceSize)}
           ${row("Lineup", b.lineup)}
-          ${row("Set length", b.setLength)}
+          ${row("Set length", performanceLength)}
           ${row("Repertoire", b.repertoire)}
+          ${row("Live estimate shown", quote.label)}
           ${row("Sound/PA", b.soundProvided)}
-          ${row("Engineer needed", b.soundEngineerNeeded)}
           ${row("Backline", b.backline)}
           ${row("Power on stage", b.powerAvailable)}
+          ${row("Overhead coverage/shade", b.overheadCoverage)}
           ${row("Stage notes", b.stageNotes)}
           ${row("Budget", b.budget)}
           ${row("Travel/lodging", b.travelLodging)}
+          ${row("Formal/upscale dress", b.formalDress)}
           ${row("Heard via", b.heardFrom)}
           ${row("Message", b.message)}
         </table>
@@ -101,6 +106,7 @@ export async function POST(request: Request) {
       eventType: b.eventType,
       date: b.eventDate,
       lineup: b.lineup,
+      estimate: quote.label,
       budget: b.budget,
     });
     return NextResponse.json({ ok: true, delivered: false });

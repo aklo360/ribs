@@ -8,7 +8,9 @@
 - Updated the booking form client to display the API's real error message and direct users to `rootsinbluestone@gmail.com` if booking email delivery is not connected.
 - Added Mailchimp Transactional support for booking emails through `MAILCHIMP_TRANSACTIONAL_API_KEY` or `MANDRILL_API_KEY`, with `RESEND_API_KEY` preserved as a fallback. The current Mailchimp Marketing key used for newsletter signups is not a Transactional/Mandrill key.
 - Required both City and State / Region on the booking event step.
-- Added a yellow one-line warning under Event date when the selected date matches a checked-in tour date: `*POTENTIAL CONFLICT, BAND IS BOOKED ON THIS DATE BUT WILL ACCOMMODATE IF POSSIBLE.`
+- Added a yellow one-line warning inside the live quote panel, under the info-icon estimate note, when the selected date matches a checked-in tour date: `*POTENTIAL CONFLICT, BAND IS BOOKED ON THIS DATE BUT WILL ACCOMMODATE IF POSSIBLE.`
+- Hid the live quote estimate until the client reaches the Performance step and selects a lineup size, so the form no longer opens with a misleading default public Duo estimate. Because the conflict warning now lives in that quote panel, it also appears there once the panel is visible.
+- Documented that booking date-conflict checks must use `lib/tour.ts` as the same source of truth as the website tour list, so future Bandsintown listener updates automatically feed the booking form without a second direct Bandsintown lookup.
 - Removed the booking quote note `Travel may adjust the final quote.` from the shared quote calculator.
 - Consolidated booking event-type buttons to `Public Event`, `Private / Corporate Event`, `Wedding`, `Fundraiser`, and `Other`, while keeping server-side compatibility for old event labels from stale browser tabs.
 - Kept Fundraiser pricing on the normal fundraiser base range with no extra discount.

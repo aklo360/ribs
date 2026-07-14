@@ -194,6 +194,8 @@ export function BookingForm() {
   const quote = estimateBookingQuote(quoteValues);
   const total = STEPS.length;
   const isLast = step === total - 1;
+  const showQuoteEstimate = step >= 2 && Boolean(quoteValues.lineup);
+  const dateConflict = dateHasBookedShow(quoteValues.eventDate);
 
   useEffect(() => {
     if (
@@ -264,7 +266,9 @@ export function BookingForm() {
 
   return (
     <div className="glass-raised min-w-0 rounded-3xl p-5 sm:p-8">
-      <QuoteEstimate estimate={quote} />
+      {showQuoteEstimate && (
+        <QuoteEstimate estimate={quote} dateConflict={dateConflict} />
+      )}
 
       {/* Progress */}
       <div className="mb-7">
@@ -367,7 +371,13 @@ export function BookingForm() {
   );
 }
 
-function QuoteEstimate({ estimate }: { estimate: BookingQuoteEstimate }) {
+function QuoteEstimate({
+  estimate,
+  dateConflict,
+}: {
+  estimate: BookingQuoteEstimate;
+  dateConflict: boolean;
+}) {
   return (
     <div className="mb-6 min-w-0 border-b border-white/10 pb-5">
       <div className="flex items-start justify-between gap-4">
@@ -385,6 +395,11 @@ function QuoteEstimate({ estimate }: { estimate: BookingQuoteEstimate }) {
           Estimate only; final quote follows logistics, production, travel, and event review.
         </p>
       </div>
+      {dateConflict && (
+        <p className="mt-2 text-xs font-semibold uppercase tracking-normal text-yellow-300">
+          *POTENTIAL CONFLICT, BAND IS BOOKED ON THIS DATE BUT WILL ACCOMMODATE IF POSSIBLE.
+        </p>
+      )}
       {estimate.notes.length > 0 && (
         <div className="mt-3 flex min-w-0 max-w-full gap-2 overflow-x-auto pb-1">
           {estimate.notes.slice(0, 3).map((note) => (
@@ -442,9 +457,7 @@ function Step1({ register, control, errors }: StepProps) {
 
 function Step2({ register, control, errors }: StepProps) {
   const setting = useWatch({ control, name: "setting" });
-  const eventDate = useWatch({ control, name: "eventDate" });
   const isOutdoor = setting === "Outdoor" || setting === "Both / Unsure";
-  const dateConflict = dateHasBookedShow(eventDate);
 
   return (
     <>
@@ -460,11 +473,6 @@ function Step2({ register, control, errors }: StepProps) {
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Event date">
           <Input type="date" {...register("eventDate")} />
-          {dateConflict && (
-            <p className="text-xs font-semibold uppercase tracking-normal text-primary">
-              *POTENTIAL CONFLICT, BAND IS BOOKED ON THIS DATE BUT WILL ACCOMMODATE IF POSSIBLE.
-            </p>
-          )}
         </Field>
         <Controller
           control={control}

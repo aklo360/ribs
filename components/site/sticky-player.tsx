@@ -27,7 +27,6 @@ export function StickyPlayer() {
     progress,
     dismissed,
     toggle,
-    pause,
     dismiss,
     seekToRatio,
   } = usePlayer();
@@ -53,11 +52,6 @@ export function StickyPlayer() {
     observer.observe(music);
     return () => observer.disconnect();
   }, []);
-
-  useEffect(() => {
-    if (!musicVisible) return;
-    pause();
-  }, [musicVisible, pause]);
 
   if (!release?.previewUrl) return null;
 

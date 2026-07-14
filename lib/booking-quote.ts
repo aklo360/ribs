@@ -1,18 +1,19 @@
 import type { BookingInput } from "./booking-schema";
 
 type Lineup = "Duo" | "4-Piece" | "5-Piece" | "7-Piece";
-type EventBucket = "public" | "private" | "wedding" | "festival";
+type EventBucket = "public" | "private" | "wedding" | "fundraiser";
 
 type BaseRange = {
   min: number;
   max: number;
 };
 
+/** Editable base ranges for the live quote generator. */
 const PUBLIC_SHOWS: Record<Lineup, BaseRange> = {
-  Duo: { min: 600, max: 1200 },
-  "4-Piece": { min: 1200, max: 2000 },
-  "5-Piece": { min: 1500, max: 3000 },
-  "7-Piece": { min: 2000, max: 4000 },
+  Duo: { min: 500, max: 1200 },
+  "4-Piece": { min: 800, max: 2000 },
+  "5-Piece": { min: 1000, max: 3000 },
+  "7-Piece": { min: 1400, max: 4000 },
 };
 
 const PRIVATE_EVENTS: Record<Lineup, BaseRange> = {
@@ -22,7 +23,7 @@ const PRIVATE_EVENTS: Record<Lineup, BaseRange> = {
   "7-Piece": { min: 3000, max: 5000 },
 };
 
-const FESTIVALS: Record<Lineup, BaseRange> = {
+const FUNDRAISERS: Record<Lineup, BaseRange> = {
   Duo: { min: 400, max: 2000 },
   "4-Piece": { min: 800, max: 1200 },
   "5-Piece": { min: 1000, max: 2500 },
@@ -36,15 +37,30 @@ const WEDDINGS: Record<Lineup, BaseRange> = {
   "7-Piece": { min: 5000, max: 8000 },
 };
 
+const LINEUPS: Lineup[] = ["Duo", "4-Piece", "5-Piece", "7-Piece"];
+const RECOMMEND_LINEUP = "Not sure — recommend one";
+const TWO_HOUR_SET_LENGTH = "≤ 2 hours";
+const FOUR_HOUR_SET_LENGTH = "4 hours";
+
 const isLineup = (value: BookingInput["lineup"]): value is Lineup =>
   value === "Duo" || value === "4-Piece" || value === "5-Piece" || value === "7-Piece";
 
+const isLineupChoice = (value: BookingInput["lineup"]) =>
+  isLineup(value) || value === RECOMMEND_LINEUP;
+
+const isTwoHourSetLength = (value: BookingInput["setLength"]) =>
+  value === TWO_HOUR_SET_LENGTH || value === "2 hours";
+
 function eventBucket(eventType: BookingInput["eventType"]): EventBucket {
   if (eventType === "Wedding") return "wedding";
-  if (eventType === "Festival / Fundraiser") {
-    return "festival";
+  if (eventType === "Fundraiser" || eventType === "Festival / Fundraiser") {
+    return "fundraiser";
   }
-  if (eventType === "Private Party" || eventType === "Corporate Event") {
+  if (
+    eventType === "Private / Corporate Event" ||
+    eventType === "Private Party" ||
+    eventType === "Corporate Event"
+  ) {
     return "private";
   }
   return "public";
@@ -53,7 +69,7 @@ function eventBucket(eventType: BookingInput["eventType"]): EventBucket {
 function baseRange(bucket: EventBucket, lineup: Lineup): BaseRange {
   if (bucket === "private") return PRIVATE_EVENTS[lineup];
   if (bucket === "wedding") return WEDDINGS[lineup];
-  if (bucket === "festival") return FESTIVALS[lineup];
+  if (bucket === "fundraiser") return FUNDRAISERS[lineup];
   return PUBLIC_SHOWS[lineup];
 }
 
@@ -63,6 +79,105 @@ function roundToNearest50(value: number) {
 
 function currency(value: number) {
   return `$${value.toLocaleString("en-US")}`;
+}
+
+function customLengthRange(range: BaseRange, hours: number): BaseRange {
+  const spread = range.max - range.min;
+  const extraHours = Math.max(hours - 4, 0);
+  const fourHourMin = range.min + spread * 0.65;
+
+  return {
+    min: fourHourMin + range.max * extraHours * 0.08,
+    max: range.max + range.max * extraHours * 0.14,
+  };
+}
+
+function performanceRange(
+  range: BaseRange,
+  input: Partial<BookingInput>,
+  customHours: number | undefined
+): BaseRange {
+  const setLength =
+    input.repertoire === "Original Music" ? TWO_HOUR_SET_LENGTH : input.setLength;
+
+  if (isTwoHourSetLength(setLength)) {
+    return {
+      min: range.min,
+      max: range.max,
+    };
+  }
+
+  if (setLength === "3 hours") {
+    return {
+      min: range.min + (range.max - range.min) * 0.35,
+      max: range.max,
+    };
+  }
+
+  if (setLength === FOUR_HOUR_SET_LENGTH || customHours === 4) {
+    return customLengthRange(range, 4);
+  }
+
+  return range;
+}
+
+function adjustedLineupRange(
+  bucket: EventBucket,
+  lineup: Lineup,
+  input: Partial<BookingInput>,
+  customHours: number | undefined,
+  audience: number
+): BaseRange {
+  let { min, max } = performanceRange(baseRange(bucket, lineup), input, customHours);
+
+  if (Number.isFinite(audience) && audience >= 300) {
+    const lift = audience >= 750 ? 1.18 : 1.1;
+    min *= lift;
+    max *= lift;
+  }
+
+  if (
+    input.soundProvided === "Band provides sound" ||
+    input.soundProvided === "Band provides PA / sound"
+  ) {
+    min *= 1.12;
+    max *= 1.2;
+  } else if (input.soundProvided === "Mix of Both" || input.soundProvided === "Unsure") {
+    max *= 1.2;
+  }
+
+  if (input.formalDress) {
+    min *= 1.06;
+    max *= 1.1;
+  }
+
+  if (bucket === "fundraiser") {
+    min *= 0.9;
+    max *= 0.9;
+  }
+
+  return { min, max };
+}
+
+function estimateRange(
+  bucket: EventBucket,
+  input: Partial<BookingInput>,
+  customHours: number | undefined,
+  audience: number
+): BaseRange {
+  if (input.lineup === RECOMMEND_LINEUP) {
+    const ranges = LINEUPS.map((lineup) =>
+      adjustedLineupRange(bucket, lineup, input, customHours, audience)
+    );
+
+    return {
+      min: Math.min(...ranges.map((range) => range.min)),
+      max: Math.max(...ranges.map((range) => range.max)),
+    };
+  }
+
+  const lineup = isLineup(input.lineup) ? input.lineup : "Duo";
+  return adjustedLineupRange(bucket, lineup, input, customHours, audience);
 }
 
 export type BookingQuoteEstimate = {
@@ -75,64 +190,31 @@ export type BookingQuoteEstimate = {
 };
 
 export function estimateBookingQuote(input: Partial<BookingInput>): BookingQuoteEstimate {
-  const lineup = isLineup(input.lineup) ? input.lineup : "Duo";
   const bucket = eventBucket(input.eventType);
-  const range = baseRange(bucket, lineup);
   const customHours =
-    typeof input.customHours === "number" && Number.isFinite(input.customHours)
-      ? input.customHours
+    input.repertoire !== "Original Music" &&
+    typeof input.customHours === "number" &&
+    Number.isFinite(input.customHours)
+      ? Math.min(input.customHours, 4)
       : undefined;
   const notes: string[] = [];
 
-  let min = range.min;
-  let max = range.max;
-
-  if (!isLineup(input.lineup)) {
-    notes.push("Choose a lineup size to tighten this range.");
-  }
-
   if (input.repertoire === "Original Music") {
-    max = Math.min(max, range.min + (range.max - range.min) * 0.55);
-    notes.push("Original-music sets are capped at 2 hours.");
-  } else if (input.setLength === "2 hours") {
-    min = range.min + (range.max - range.min) * 0.15;
-    max = range.min + (range.max - range.min) * 0.65;
+    notes.push(`Original-music sets are capped at ${TWO_HOUR_SET_LENGTH}.`);
   } else if (input.setLength === "3 hours") {
-    min = range.min + (range.max - range.min) * 0.35;
-    max = range.min + (range.max - range.min) * 0.85;
     notes.push("Most clients choose 3 hours.");
-  } else if (customHours && customHours >= 4) {
-    const extraLift = Math.min((customHours - 4) * 0.08, 0.32);
-    min = range.min + (range.max - range.min) * (0.65 + extraLift);
-    max = range.max;
-    notes.push(`${customHours} hours requires a custom final quote.`);
-  } else {
-    notes.push("Select a performance length to tighten this range.");
   }
 
   const audience = Number.parseInt(String(input.audienceSize ?? "").replace(/\D/g, ""), 10);
   if (Number.isFinite(audience) && audience >= 300) {
-    const lift = audience >= 750 ? 1.18 : 1.1;
-    min *= lift;
-    max *= lift;
     notes.push("Large attendance can increase production needs.");
   }
 
-  if (input.soundProvided === "Band provides PA / sound") {
-    min *= 1.12;
-    max *= 1.2;
-    notes.push("Band-provided PA, sound equipment, or engineer can increase pricing.");
-  }
-
   if (input.formalDress) {
-    min *= 1.06;
-    max *= 1.1;
     notes.push("Formal presentation requirements may carry an additional fee.");
   }
 
-  if (input.city || input.region) {
-    notes.push("Travel may adjust the final quote.");
-  }
+  const { min, max } = estimateRange(bucket, input, customHours, audience);
 
   const finalMin = roundToNearest50(min);
   const finalMax = Math.max(roundToNearest50(max), finalMin + 50);
@@ -144,7 +226,9 @@ export function estimateBookingQuote(input: Partial<BookingInput>): BookingQuote
     bucket,
     notes,
     ready: Boolean(
-      input.eventType && isLineup(input.lineup) && (input.setLength || customHours)
+      input.eventType &&
+        isLineupChoice(input.lineup) &&
+        (input.repertoire === "Original Music" || input.setLength || customHours)
     ),
   };
 }

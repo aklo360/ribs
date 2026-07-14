@@ -36,6 +36,10 @@ function rangeLabel(show: Show): string | null {
     : `${sm} ${s.getDate()} – ${em} ${e.getDate()}`;
 }
 
+function ticketPriceLabel(show: Show): string | null {
+  return show.priceLabel ?? (show.status === "free" ? STATUS_LABEL.free : null);
+}
+
 export function TourDates() {
   const all = upcomingShows();
   const [expanded, setExpanded] = useState(false);
@@ -64,6 +68,7 @@ export function TourDates() {
               const d = formatShowDate(show.date);
               const range = rangeLabel(show);
               const soldout = show.status === "soldout";
+              const price = ticketPriceLabel(show);
               return (
                 <Reveal
                   key={`${show.date}-${show.venue}`}
@@ -115,7 +120,15 @@ export function TourDates() {
                     </div>
 
                     {/* CTA */}
-                    <div className="shrink-0">
+                    <div className="flex shrink-0 items-center gap-2 sm:justify-end">
+                      {price && (
+                        <Badge
+                          variant="secondary"
+                          className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-semibold text-foreground/75"
+                        >
+                          {price}
+                        </Badge>
+                      )}
                       {soldout || !show.ticketUrl ? (
                         <Badge
                           variant="secondary"
@@ -132,7 +145,7 @@ export function TourDates() {
                               rel="noopener noreferrer"
                             />
                           }
-                          className="w-full gap-2 font-semibold sm:w-auto"
+                          className="min-w-24 gap-2 font-semibold"
                         >
                           <Bell className="size-4" />
                           RSVP

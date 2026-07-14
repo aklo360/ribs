@@ -13,7 +13,7 @@ export const SITE = {
     "Roots in Blue Stone is a Pennsylvania-born band blending reggae, rock, blues, and soul into a sound that feels both familiar and fresh.",
   // Update to the production domain once confirmed.
   url: "https://www.rootsinbluestone.com",
-  bookingEmail: "booking@rootsinbluestone.com",
+  bookingEmail: "rootsinbluestone@gmail.com",
   genres: ["Reggae", "Rock", "Blues", "Soul"],
   homeBase: "Pennsylvania · The Poconos",
   logo: "/img/logo.png",
@@ -23,6 +23,10 @@ export const SITE = {
   duskReviews: 11,
   // Bandsintown artist page (follow / request a show).
   bandsintown: "https://www.bandsintown.com/a/15511983",
+  // Public Mailchimp connected-site loader from the previous site. This is not
+  // the newsletter submit path; custom signups still post through /api/newsletter.
+  mailchimpConnectedSiteScript:
+    "https://chimpstatic.com/mcjs-connected/js/users/5b4e3c0fcf331aa18189f0a1a/d183299d8405d9b5fa6454cdf.js",
 } as const;
 
 export const BIO = [
@@ -44,9 +48,9 @@ export const MEMBERS: Member[] = [
 /** Lineup configurations the band can be booked as (labels only — no invented copy). */
 export const LINEUPS = [
   { key: "duo", label: "Duo" },
-  { key: "trio", label: "Trio" },
-  { key: "5-piece", label: "5-Piece" },
-  { key: "7-piece", label: "7-Piece" },
+  { key: "4-piece", label: "4 Piece" },
+  { key: "5-piece", label: "5 Piece" },
+  { key: "7-piece", label: "7 Piece" },
 ] as const;
 
 export type Release = {
@@ -134,34 +138,6 @@ export const RELEASES: Release[] = [
         key: "spotify",
         label: "Spotify",
         url: "https://open.spotify.com/search/Roots%20In%20Blue%20Stone%20One%20Last%20Breath",
-      },
-    ],
-  },
-  {
-    title: "Santa Claus Is Coming To Town",
-    type: "Single",
-    status: "2025",
-    artist: "Roots In Blue Stone",
-    cover: "/img/releases/santa-claus.jpg",
-    listenUrl:
-      "https://music.apple.com/us/album/santa-claus-is-coming-to-town/1859104655?i=1859104656",
-    releaseDate: "December 12, 2025",
-    genre: "Holiday",
-    trackCount: 1,
-    appleMusicUrl:
-      "https://music.apple.com/us/album/santa-claus-is-coming-to-town/1859104655?i=1859104656",
-    previewUrl:
-      "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/ca/04/31/ca04319a-0dea-d0dc-36bd-cf167cb365dc/mzaf_1705035738401305258.plus.aac.p.m4a",
-    platforms: [
-      {
-        key: "appleMusic",
-        label: "Apple Music",
-        url: "https://music.apple.com/us/album/santa-claus-is-coming-to-town/1859104655?i=1859104656",
-      },
-      {
-        key: "spotify",
-        label: "Spotify",
-        url: "https://open.spotify.com/search/Roots%20In%20Blue%20Stone%20Santa%20Claus%20Is%20Coming%20To%20Town",
       },
     ],
   },
@@ -414,21 +390,47 @@ export const SOCIALS: Record<
 /** Spotify artist ID for the embedded player. */
 export const SPOTIFY_ARTIST_ID = "1MmtWj3eNt02HjmdiQVY2q";
 
-/** Photo gallery — real hi-res press/live shots from the site, Walter's Drive set, and downloaded RIBS photo zips. */
+/** Photo gallery — deduped real press/live shots from the site, Walter's Drive set, and downloaded RIBS photo zips. */
+const BASE_GALLERY = [
+  "/gallery/walter/w05.jpg",
+  "/gallery/walter/w03.jpg",
+  "/gallery/walter/w04.jpg",
+  "/gallery/walter/w13.jpg",
+  "/gallery/walter/w06.jpg",
+  "/gallery/walter/w12.jpg",
+  "/gallery/walter/w11.jpg",
+  "/gallery/walter/w10.jpg",
+  "/gallery/g09.jpg",
+  "/gallery/walter/w08.jpg",
+  "/gallery/walter/w07.jpg",
+  "/gallery/walter/w09.jpg",
+  "/gallery/g13.jpg",
+  "/gallery/walter/w01.jpg",
+  "/gallery/g15.jpg",
+  "/gallery/g16.jpg",
+  "/gallery/g17.jpg",
+  "/gallery/g18.jpg",
+  "/gallery/walter/w02.jpg",
+] as const;
+
+const ZIP_GALLERY_EXCLUSIONS = new Set([
+  1, 2, 3, 4, 5, 6, 7, 8, 10, 20, 23, 26, 37, 38, 39, 40, 41, 42, 43, 44,
+  60, 61, 62, 67, 69, 70, 71, 72, 74, 75, 76, 77, 78, 79, 80, 81, 82,
+]);
+
 export const GALLERY: string[] = [
+  ...BASE_GALLERY,
   ...Array.from(
-    { length: 19 },
-    (_, i) => `/gallery/g${String(i + 1).padStart(2, "0")}.jpg`
-  ),
-  ...Array.from(
-    { length: 13 },
-    (_, i) => `/gallery/walter/w${String(i + 1).padStart(2, "0")}.jpg`
-  ),
-  ...Array.from(
-    { length: 100 },
+    { length: 84 },
     (_, i) => `/gallery/zips/ribs-zip-${String(i + 1).padStart(3, "0")}.jpg`
-  ),
+  ).filter((path) => {
+    const number = Number(path.match(/ribs-zip-(\d+)\.jpg$/)?.[1]);
+    return !ZIP_GALLERY_EXCLUSIONS.has(number);
+  }),
 ];
+
+/** Primary duo portrait used in the About section. */
+export const ABOUT_IMAGE = "/gallery/g09.jpg";
 
 /** YouTube uploads playlist (UC… channel id with the UC swapped for UU). */
 export const YOUTUBE_UPLOADS_PLAYLIST = "UUgPcbcspzKlnl7sej13vPoA";

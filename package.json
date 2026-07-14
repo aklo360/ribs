@@ -7,6 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "tour:validate": "node scripts/tour-sync.mjs --validate-current",
+    "tour:sync": "node scripts/tour-sync.mjs --source-env",
+    "tour:sync:write": "node scripts/tour-sync.mjs --source-env --write",
     "cf:build": "npx @cloudflare/next-on-pages@1",
     "cf:deploy": "npm run cf:build && wrangler pages deploy .vercel/output/static --project-name roots-in-blue-stone"
   },

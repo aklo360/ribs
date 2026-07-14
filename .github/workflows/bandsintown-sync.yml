@@ -1,0 +1,134 @@
+name: Bandsintown tour sync
+
+on:
+  workflow_dispatch:
+    inputs:
+      replace:
+        description: "Replace current shows that are missing from the source"
+        required: false
+        default: false
+        type: boolean
+  schedule:
+    - cron: "22 13 * * *"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: bandsintown-tour-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Sync tour dates
+    runs-on: ubuntu-latest
+    env:
+      BANDSINTOWN_ARTIST_ID: "15511983"
+      BANDSINTOWN_ARTIST_NAME: "Roots in Blue Stone"
+      BANDSINTOWN_APP_ID: ${{ secrets.BANDSINTOWN_APP_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Sync from Bandsintown source
+        id: sync
+        env:
+          BANDSINTOWN_EVENTS_URL: ${{ secrets.BANDSINTOWN_EVENTS_URL }}
+          BANDSINTOWN_AUTH_TOKEN: ${{ secrets.BANDSINTOWN_AUTH_TOKEN }}
+        run: |
+          set -euo pipefail
+          replace_flag=""
+          if [ "${{ github.event.inputs.replace || 'false' }}" = "true" ]; then
+            replace_flag="--replace"
+          fi
+          node scripts/tour-sync.mjs \
+            --source-env \
+            --write \
+            $replace_flag \
+            --summary-file "$RUNNER_TEMP/tour-sync-summary.json" \
+            --pr-body-file "$RUNNER_TEMP/tour-sync-pr-body.md"
+
+      - name: Validate current tour data
+        run: npm run tour:validate
+
+      - name: Lint
+        if: steps.sync.outputs.changed == 'true'
+        run: npm run lint
+
+      - name: Build
+        if: steps.sync.outputs.changed == 'true'
+        run: npm run build
+
+      - name: Create or update pull request
+        id: pr
+        if: steps.sync.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          branch="automation/bandsintown-tour-sync"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git add lib/tour.ts
+          if git diff --cached --quiet; then
+            echo "pull_request_url=" >> "$GITHUB_OUTPUT"
+            echo "pull_request_number=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git commit -m "Update RIBS tour dates from Bandsintown"
+          git push --force-with-lease origin "$branch"
+          existing_url="$(gh pr list --head "$branch" --state open --json url --jq '.[0].url // empty')"
+          if [ -n "$existing_url" ]; then
+            gh pr edit "$existing_url" --body-file "$RUNNER_TEMP/tour-sync-pr-body.md"
+            pr_url="$existing_url"
+          else
+            pr_url="$(gh pr create \
+              --base main \
+              --head "$branch" \
+              --title "Update RIBS tour dates from Bandsintown" \
+              --body-file "$RUNNER_TEMP/tour-sync-pr-body.md")"
+          fi
+          pr_number="$(gh pr view "$pr_url" --json number --jq '.number')"
+          echo "pull_request_url=$pr_url" >> "$GITHUB_OUTPUT"
+          echo "pull_request_number=$pr_number" >> "$GITHUB_OUTPUT"
+
+      - name: Alert LLPhant on Telegram
+        if: steps.pr.outputs.pull_request_url != ''
+        continue-on-error: true
+        env:
+          LLPHANT_TG_BOT_TOKEN: ${{ secrets.LLPHANT_TG_BOT_TOKEN }}
+          LLPHANT_TELEGRAM_BOT_TOKEN: ${{ secrets.LLPHANT_TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_BOT_TOKEN_LLPHANT: ${{ secrets.TELEGRAM_BOT_TOKEN_LLPHANT }}
+          LLPHANT_TG_CHAT_ID: ${{ secrets.LLPHANT_TG_CHAT_ID }}
+          LLPHANT_TELEGRAM_CHAT_ID: ${{ secrets.LLPHANT_TELEGRAM_CHAT_ID }}
+          LLPHANT_TG_THREAD_ID: ${{ secrets.LLPHANT_TG_THREAD_ID }}
+          LLPHANT_TELEGRAM_THREAD_ID: ${{ secrets.LLPHANT_TELEGRAM_THREAD_ID }}
+          PR_URL: ${{ steps.pr.outputs.pull_request_url }}
+          PR_NUMBER: ${{ steps.pr.outputs.pull_request_number }}
+        run: node scripts/notify-llphant-tg.mjs --tour-pr --summary-file "$RUNNER_TEMP/tour-sync-summary.json"
+
+      - name: Alert LLPhant on Telegram if sync fails
+        if: failure()
+        continue-on-error: true
+        env:
+          LLPHANT_TG_BOT_TOKEN: ${{ secrets.LLPHANT_TG_BOT_TOKEN }}
+          LLPHANT_TELEGRAM_BOT_TOKEN: ${{ secrets.LLPHANT_TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_BOT_TOKEN_LLPHANT: ${{ secrets.TELEGRAM_BOT_TOKEN_LLPHANT }}
+          LLPHANT_TG_CHAT_ID: ${{ secrets.LLPHANT_TG_CHAT_ID }}
+          LLPHANT_TELEGRAM_CHAT_ID: ${{ secrets.LLPHANT_TELEGRAM_CHAT_ID }}
+          LLPHANT_TG_THREAD_ID: ${{ secrets.LLPHANT_TG_THREAD_ID }}
+          LLPHANT_TELEGRAM_THREAD_ID: ${{ secrets.LLPHANT_TELEGRAM_THREAD_ID }}
+        run: node scripts/notify-llphant-tg.mjs --failure

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Section } from "./section";
@@ -12,7 +12,10 @@ import { cn } from "@/lib/utils";
 export function Gallery() {
   const [i, setI] = useState(0);
   const [dir, setDir] = useState(1);
-  const total = GALLERY.length;
+  const thumbnailRailRef = useRef<HTMLDivElement | null>(null);
+  const thumbnailRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const photos = GALLERY;
+  const total = photos.length;
 
   const go = useCallback(
     (n: number) => {
@@ -39,6 +42,24 @@ export function Gallery() {
     return () => window.removeEventListener("keydown", onKey);
   }, [next, prev]);
 
+  useEffect(() => {
+    const rail = thumbnailRailRef.current;
+    const activeThumbnail = thumbnailRefs.current[i];
+
+    if (!rail || !activeThumbnail) return;
+
+    const target =
+      activeThumbnail.offsetLeft -
+      rail.clientWidth / 2 +
+      activeThumbnail.clientWidth / 2;
+    const maxScroll = rail.scrollWidth - rail.clientWidth;
+
+    rail.scrollTo({
+      left: Math.max(0, Math.min(target, maxScroll)),
+      behavior: "smooth",
+    });
+  }, [i]);
+
   return (
     <Section id="gallery" eyebrow="On Stage" title="Gallery">
       <Reveal>
@@ -55,7 +76,7 @@ export function Gallery() {
               className="absolute inset-0 flex items-center justify-center p-2"
             >
               <SmartImage
-                src={GALLERY[i]}
+                src={photos[i]}
                 alt={`Roots in Blue Stone ${i + 1}`}
                 seed={i}
                 className="max-h-full max-w-full rounded-lg object-contain"
@@ -88,10 +109,16 @@ export function Gallery() {
         </div>
 
         {/* Thumbnail strip */}
-        <div className="mt-4 flex gap-2 overflow-x-auto pb-2 [scrollbar-width:thin]">
-          {GALLERY.map((src, n) => (
+        <div
+          ref={thumbnailRailRef}
+          className="mt-4 flex gap-2 overflow-x-auto pb-2 [scrollbar-width:thin]"
+        >
+          {photos.map((src, n) => (
             <button
               key={src}
+              ref={(node) => {
+                thumbnailRefs.current[n] = node;
+              }}
               type="button"
               onClick={() => go(n)}
               aria-label={`Photo ${n + 1}`}

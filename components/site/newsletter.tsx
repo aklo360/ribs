@@ -1,39 +1,61 @@
 "use client";
 
-import { useState } from "react";
+import { type FormEvent, useState } from "react";
 import { Loader2, Mail, Check } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-/**
- * Mailchimp newsletter signup. Set NEXT_PUBLIC_MAILCHIMP_URL to your Mailchimp
- * embedded-form action URL (…list-manage.com/subscribe/post?u=…&id=…).
- * Posts no-cors (Mailchimp blocks CORS), so success is optimistic.
- */
 export function Newsletter() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("Thanks for subscribing!");
 
-  async function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+    const formData = new FormData(e.currentTarget);
+    const address = email.trim();
+
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(address)) {
       toast.error("Enter a valid email");
       return;
     }
+
     setLoading(true);
     try {
-      const url = process.env.NEXT_PUBLIC_MAILCHIMP_URL;
-      if (url) {
-        const body = new URLSearchParams();
-        body.set("EMAIL", email);
-        await fetch(url, { method: "POST", mode: "no-cors", body });
+      const response = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: address,
+          company_website: formData.get("company_website") ?? "",
+        }),
+      });
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          typeof data.error === "string"
+            ? data.error
+            : "Something went wrong. Try again."
+        );
       }
+
+      const message =
+        data.alreadySubscribed === true
+          ? "You're already on the list."
+          : data.status === "pending"
+            ? "Check your inbox to confirm."
+            : "Thanks for subscribing!";
+
+      setSuccessMessage(message);
       setDone(true);
-      toast.success("You're on the list!");
-    } catch {
-      toast.error("Something went wrong. Try again.");
+      toast.success(message);
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Something went wrong. Try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -57,14 +79,26 @@ export function Newsletter() {
         {done ? (
           <div className="flex items-center gap-2.5 rounded-full bg-white/10 px-5 py-3 text-sm font-medium">
             <Check className="size-4" />
-            Thanks for subscribing!
+            {successMessage}
           </div>
         ) : (
           <form
             onSubmit={onSubmit}
-            className="flex w-full gap-2 sm:max-w-sm"
+            className="relative flex w-full gap-2 sm:max-w-sm"
             noValidate
           >
+            <label
+              aria-hidden="true"
+              className="pointer-events-none absolute -left-[100vw] h-px w-px opacity-0"
+            >
+              Website
+              <input
+                type="text"
+                name="company_website"
+                tabIndex={-1}
+                autoComplete="off"
+              />
+            </label>
             <div className="relative flex-1">
               <Mail className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-foreground/40" />
               <Input
@@ -74,6 +108,7 @@ export function Newsletter() {
                 placeholder="you@email.com"
                 className="h-11 pl-9"
                 aria-label="Email address"
+                disabled={loading}
               />
             </div>
             <Button

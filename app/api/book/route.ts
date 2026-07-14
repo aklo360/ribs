@@ -198,10 +198,6 @@ export async function POST(request: Request) {
           ${row("Power on stage", b.powerAvailable)}
           ${row("Overhead coverage/shade", b.overheadCoverage)}
           ${row("Stage notes", b.stageNotes)}
-          ${row("Budget", b.budget)}
-          ${row("Travel/lodging", b.travelLodging)}
-          ${row("Formal/upscale dress", b.formalDress)}
-          ${row("Heard via", b.heardFrom)}
           ${row("Message", b.message)}
         </table>
       </div>
@@ -226,7 +222,6 @@ export async function POST(request: Request) {
       date: b.eventDate,
       lineup: b.lineup,
       estimate: quote.label,
-      budget: b.budget,
     });
     return NextResponse.json(
       {

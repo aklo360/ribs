@@ -41,8 +41,6 @@ import {
   TWO_HOUR_SET_LENGTH,
   PROVIDED_OPTIONS,
   BACKLINE_ITEMS,
-  BUDGET_RANGES,
-  HEARD_OPTIONS,
 } from "@/lib/booking-schema";
 import { estimateBookingQuote, type BookingQuoteEstimate } from "@/lib/booking-quote";
 import { SITE } from "@/lib/content";
@@ -195,7 +193,6 @@ export function BookingForm() {
   const total = STEPS.length;
   const isLast = step === total - 1;
   const showQuoteEstimate = step >= 2 && Boolean(quoteValues.lineup);
-  const dateConflict = dateHasBookedShow(quoteValues.eventDate);
 
   useEffect(() => {
     if (
@@ -267,7 +264,7 @@ export function BookingForm() {
   return (
     <div className="glass-raised min-w-0 rounded-3xl p-5 sm:p-8">
       {showQuoteEstimate && (
-        <QuoteEstimate estimate={quote} dateConflict={dateConflict} />
+        <QuoteEstimate estimate={quote} />
       )}
 
       {/* Progress */}
@@ -327,7 +324,7 @@ export function BookingForm() {
             {step === 3 && (
               <>
                 <Step4 register={register} control={control} setValue={setValue} />
-                <Step5 register={register} control={control} />
+                <Step5 register={register} />
               </>
             )}
           </motion.div>
@@ -371,13 +368,7 @@ export function BookingForm() {
   );
 }
 
-function QuoteEstimate({
-  estimate,
-  dateConflict,
-}: {
-  estimate: BookingQuoteEstimate;
-  dateConflict: boolean;
-}) {
+function QuoteEstimate({ estimate }: { estimate: BookingQuoteEstimate }) {
   return (
     <div className="mb-6 min-w-0 border-b border-white/10 pb-5">
       <div className="flex items-start justify-between gap-4">
@@ -392,14 +383,9 @@ function QuoteEstimate({
       <div className="mt-3 flex min-w-0 max-w-full items-start gap-2 overflow-x-auto pb-1 text-xs leading-relaxed text-foreground/55">
         <Info className="mt-0.5 size-3.5 shrink-0 text-primary/80" />
         <p className="shrink-0 whitespace-nowrap">
-          Estimate only; final quote follows logistics, production, travel, and event review.
+          Estimate only; final quote follows logistics, production, and event review.
         </p>
       </div>
-      {dateConflict && (
-        <p className="mt-2 text-xs font-semibold uppercase tracking-normal text-yellow-300">
-          *POTENTIAL CONFLICT, BAND IS BOOKED ON THIS DATE BUT WILL ACCOMMODATE IF POSSIBLE.
-        </p>
-      )}
       {estimate.notes.length > 0 && (
         <div className="mt-3 flex min-w-0 max-w-full gap-2 overflow-x-auto pb-1">
           {estimate.notes.slice(0, 3).map((note) => (
@@ -457,7 +443,9 @@ function Step1({ register, control, errors }: StepProps) {
 
 function Step2({ register, control, errors }: StepProps) {
   const setting = useWatch({ control, name: "setting" });
+  const eventDate = useWatch({ control, name: "eventDate" });
   const isOutdoor = setting === "Outdoor" || setting === "Both / Unsure";
+  const dateConflict = dateHasBookedShow(eventDate);
 
   return (
     <>
@@ -473,6 +461,11 @@ function Step2({ register, control, errors }: StepProps) {
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Event date">
           <Input type="date" {...register("eventDate")} />
+          {dateConflict && (
+            <p className="text-xs font-semibold uppercase tracking-normal text-yellow-300">
+              *POTENTIAL CONFLICT, BAND IS BOOKED ON THIS DATE BUT WILL ACCOMMODATE IF POSSIBLE.
+            </p>
+          )}
         </Field>
         <Controller
           control={control}
@@ -648,54 +641,14 @@ function Step4({ register, control, setValue }: StepProps) {
   );
 }
 
-function Step5({ register, control }: StepProps) {
+function Step5({ register }: Pick<StepProps, "register">) {
   return (
     <>
-      <Field label="Budget range">
-        <Controller
-          control={control}
-          name="budget"
-          render={({ field }) => (
-            <Pills options={BUDGET_RANGES} value={field.value} onChange={field.onChange} />
-          )}
-        />
-      </Field>
-      <Controller
-        control={control}
-        name="travelLodging"
-        render={({ field }) => (
-          <Toggle
-            label="Travel & lodging covered"
-            value={!!field.value}
-            onChange={field.onChange}
-          />
-        )}
-      />
-      <Controller
-        control={control}
-        name="formalDress"
-        render={({ field }) => (
-          <Toggle
-            label="Formal / upscale dress requirement"
-            value={!!field.value}
-            onChange={field.onChange}
-          />
-        )}
-      />
       <Field label="Anything else?">
         <Textarea
           rows={4}
           placeholder="Tell us about the event, the vibe, special requests…"
           {...register("message")}
-        />
-      </Field>
-      <Field label="How did you hear about us?">
-        <Controller
-          control={control}
-          name="heardFrom"
-          render={({ field }) => (
-            <Pills options={HEARD_OPTIONS} value={field.value} onChange={field.onChange} />
-          )}
         />
       </Field>
     </>

@@ -8,8 +8,8 @@
 - Updated the booking form client to display the API's real error message and direct users to `rootsinbluestone@gmail.com` if booking email delivery is not connected.
 - Added Mailchimp Transactional support for booking emails through `MAILCHIMP_TRANSACTIONAL_API_KEY` or `MANDRILL_API_KEY`, with `RESEND_API_KEY` preserved as a fallback. The current Mailchimp Marketing key used for newsletter signups is not a Transactional/Mandrill key.
 - Required both City and State / Region on the booking event step.
-- Added a yellow one-line warning inside the live quote panel, under the info-icon estimate note, when the selected date matches a checked-in tour date: `*POTENTIAL CONFLICT, BAND IS BOOKED ON THIS DATE BUT WILL ACCOMMODATE IF POSSIBLE.`
-- Hid the live quote estimate until the client reaches the Performance step and selects a lineup size, so the form no longer opens with a misleading default public Duo estimate. Because the conflict warning now lives in that quote panel, it also appears there once the panel is visible.
+- Added a yellow one-line warning under the Event Date field, on the same Event step, when the selected date matches a checked-in tour date: `*POTENTIAL CONFLICT, BAND IS BOOKED ON THIS DATE BUT WILL ACCOMMODATE IF POSSIBLE.`
+- Hid the live quote estimate until the client reaches the Performance step and selects a lineup size, so the form no longer opens with a misleading default public Duo estimate. The booked-date warning remains separate from the quote panel so clients see it immediately after choosing a conflicting date.
 - Documented that booking date-conflict checks must use `lib/tour.ts` as the same source of truth as the website tour list, so future Bandsintown listener updates automatically feed the booking form without a second direct Bandsintown lookup.
 - Removed the booking quote note `Travel may adjust the final quote.` from the shared quote calculator.
 - Consolidated booking event-type buttons to `Public Event`, `Private / Corporate Event`, `Wedding`, `Fundraiser`, and `Other`, while keeping server-side compatibility for old event labels from stale browser tabs.
@@ -21,7 +21,8 @@
 - Simplified the booking form sound question to `Will the band be providing sound?`, renamed the visible band-supplied option to `Band provides sound`, replaced the visible `Unsure` sound option with `Mix of Both`, and made that mixed option widen the quote estimate by keeping the no-PA lower bound while using the band-provided-sound upper bound. Legacy `Band provides PA / sound` and `Unsure` submissions remain valid for stale browser tabs.
 - Hid the `Backline / gear available on site` selector unless the sound answer is `Venue provides sound` or `Mix of Both`, added `Partial PA / Sound System` next to `Full PA / Sound System`, and cleared hidden gear selections when clients switch to `Band provides sound`.
 - Renamed the final booking form action button to `SUBMIT`.
-- Collapsed the booking flow from 5 displayed steps to 4 by moving budget/details onto the final sound/details screen, so the progress bar is full on `Step 4 of 4` before submitting.
+- Collapsed the booking flow from 5 displayed steps to 4 by moving final notes onto the final sound/details screen, so the progress bar is full on `Step 4 of 4` before submitting.
+- Removed the visible Budget Range, Travel & Lodging, Formal / Upscale Dress Requirement, and How Did You Hear About Us fields from the booking form. The booking schema, quote calculator, and booking email output no longer use those fields.
 - Verification: Cloudflare Pages secret-name audit, local no-sender POST returned HTTP 503 with the direct-email message, direct quote/schema probes confirmed duration-based max increases, no fundraiser discount, `4 hours` pricing, widened mixed-sound ranges, required State / Region, and rejection of `customHours: 5`, `npm run lint`, and `npm run build` passed.
 - Remaining setup: enable Mailchimp Transactional/Mandrill, add `MAILCHIMP_TRANSACTIONAL_API_KEY` or `MANDRILL_API_KEY`, and configure verified `BOOKING_FROM_EMAIL`. Mailchimp Marketing is still only for newsletter audience signups, not contact-form delivery.
 

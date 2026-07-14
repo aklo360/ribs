@@ -13,14 +13,22 @@ export const INQUIRER_TYPES = [
 ] as const;
 
 export const EVENT_TYPES = [
+  "Public Event",
+  "Private / Corporate Event",
+  "Wedding",
+  "Fundraiser",
+  "Other",
+] as const;
+
+const LEGACY_EVENT_TYPES = [
   "Bar / Restaurant",
   "Winery / Brewery",
   "Private Party",
   "Corporate Event",
-  "Wedding",
   "Festival / Fundraiser",
-  "Other",
 ] as const;
+
+const BOOKING_EVENT_TYPES = [...EVENT_TYPES, ...LEGACY_EVENT_TYPES] as const;
 
 export const LINEUP_OPTIONS = [
   "Duo",
@@ -32,17 +40,31 @@ export const LINEUP_OPTIONS = [
 
 export const REPERTOIRE_OPTIONS = ["Original Music", "Covers", "Mix of both"] as const;
 
-export const SET_LENGTH_OPTIONS = ["2 hours", "3 hours"] as const;
+export const TWO_HOUR_SET_LENGTH = "≤ 2 hours";
+const LEGACY_TWO_HOUR_SET_LENGTH = "2 hours";
+const THREE_HOUR_SET_LENGTH = "3 hours";
+export const FOUR_HOUR_SET_LENGTH = "4 hours";
+
+export const SET_LENGTH_OPTIONS = [
+  TWO_HOUR_SET_LENGTH,
+  THREE_HOUR_SET_LENGTH,
+  FOUR_HOUR_SET_LENGTH,
+] as const;
+const LEGACY_SET_LENGTH_OPTIONS = [LEGACY_TWO_HOUR_SET_LENGTH] as const;
+const BOOKING_SET_LENGTH_OPTIONS = [...SET_LENGTH_OPTIONS, ...LEGACY_SET_LENGTH_OPTIONS] as const;
 
 export const PROVIDED_OPTIONS = [
   "Venue provides sound",
-  "Band provides PA / sound",
-  "Unsure",
+  "Band provides sound",
+  "Mix of Both",
 ] as const;
+const LEGACY_PROVIDED_OPTIONS = ["Band provides PA / sound", "Unsure"] as const;
+const BOOKING_PROVIDED_OPTIONS = [...PROVIDED_OPTIONS, ...LEGACY_PROVIDED_OPTIONS] as const;
 
 export const BACKLINE_ITEMS = [
   "Will provide via email",
   "Full PA / Sound System",
+  "Partial PA / Sound System",
   "Stage Monitors",
   "Drum Kit",
   "Bass Amp",
@@ -80,7 +102,7 @@ export const bookingSchema = z.object({
   inquirerType: z.enum(INQUIRER_TYPES).optional(),
 
   // Event
-  eventType: z.enum(EVENT_TYPES).optional(),
+  eventType: z.enum(BOOKING_EVENT_TYPES).optional(),
   eventDate: z.string().optional(),
   dateFlexible: z.boolean().default(false),
   city: z.string().min(2, "Where is the event?"),
@@ -91,19 +113,24 @@ export const bookingSchema = z.object({
 
   // Performance
   lineup: z.enum(LINEUP_OPTIONS).optional(),
-  setLength: z.enum(SET_LENGTH_OPTIONS).optional(),
+  setLength: z.enum(BOOKING_SET_LENGTH_OPTIONS).optional(),
   customHours: z.preprocess(
     (value) => {
       if (value === "" || value === undefined || value === null) return undefined;
       const number = Number(value);
       return Number.isNaN(number) ? value : number;
     },
-    z.number().int("Enter a whole number of hours").min(4, "Use custom hours for 4+").max(12, "Please add longer events in the notes").optional()
+    z
+      .number()
+      .int("Enter a whole number of hours")
+      .min(4, "4 hours is the maximum set length")
+      .max(4, "4 hours is the maximum set length")
+      .optional()
   ),
   repertoire: z.enum(REPERTOIRE_OPTIONS).optional(),
 
   // Technical / backline
-  soundProvided: z.enum(PROVIDED_OPTIONS).optional(),
+  soundProvided: z.enum(BOOKING_PROVIDED_OPTIONS).optional(),
   backline: z.array(z.string()).default([]),
   stageNotes: z.string().optional(),
   powerAvailable: z.boolean().default(false),

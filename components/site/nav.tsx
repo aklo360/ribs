@@ -73,7 +73,11 @@ export function SiteNav() {
             >
               <SheetTitle className="sr-only">{SITE.name}</SheetTitle>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={SITE.logo} alt={SITE.name} className="h-8 w-auto" />
+              <img
+                src={SITE.logo}
+                alt={SITE.name}
+                className="h-8 w-auto self-start object-contain"
+              />
               <div className="mt-8 flex flex-col gap-1">
                 {NAV_LINKS.map((l) => (
                   <SheetClose

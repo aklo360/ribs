@@ -38,12 +38,14 @@ import {
   LINEUP_OPTIONS,
   REPERTOIRE_OPTIONS,
   SET_LENGTH_OPTIONS,
+  TWO_HOUR_SET_LENGTH,
   PROVIDED_OPTIONS,
   BACKLINE_ITEMS,
   BUDGET_RANGES,
   HEARD_OPTIONS,
 } from "@/lib/booking-schema";
 import { estimateBookingQuote, type BookingQuoteEstimate } from "@/lib/booking-quote";
+import { SITE } from "@/lib/content";
 
 /* ---------- small field primitives ---------- */
 
@@ -161,8 +163,7 @@ const STEPS = [
   { title: "Your details", fields: ["name", "email"] },
   { title: "The event", fields: ["city"] },
   { title: "Performance", fields: [] },
-  { title: "Sound & backline", fields: [] },
-  { title: "Budget & details", fields: [] },
+  { title: "Sound & details", fields: [] },
 ] as const;
 
 export function BookingForm() {
@@ -191,9 +192,12 @@ export function BookingForm() {
   useEffect(() => {
     if (
       quoteValues.repertoire === "Original Music" &&
-      (quoteValues.setLength !== "2 hours" || quoteValues.customHours)
+      (quoteValues.setLength !== TWO_HOUR_SET_LENGTH || quoteValues.customHours)
     ) {
-      setValue("setLength", "2 hours", { shouldDirty: true, shouldValidate: true });
+      setValue("setLength", TWO_HOUR_SET_LENGTH, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
       setValue("customHours", undefined, { shouldDirty: true, shouldValidate: true });
     }
   }, [quoteValues.customHours, quoteValues.repertoire, quoteValues.setLength, setValue]);
@@ -212,11 +216,22 @@ export function BookingForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
-      if (!res.ok) throw new Error("Request failed");
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(
+          typeof data.error === "string"
+            ? data.error
+            : `Something went wrong. Email ${SITE.bookingEmail} directly.`
+        );
+      }
       setDone(true);
-      toast.success("Inquiry sent — we'll be in touch soon!");
-    } catch {
-      toast.error("Something went wrong. Email us directly and we'll sort it out.");
+      toast.success("Inquiry sent. We'll be in touch soon!");
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : `Something went wrong. Email ${SITE.bookingEmail} directly.`
+      );
     } finally {
       setSubmitting(false);
     }
@@ -299,8 +314,12 @@ export function BookingForm() {
                 setValue={setValue}
               />
             )}
-            {step === 3 && <Step4 register={register} control={control} />}
-            {step === 4 && <Step5 register={register} control={control} />}
+            {step === 3 && (
+              <>
+                <Step4 register={register} control={control} setValue={setValue} />
+                <Step5 register={register} control={control} />
+              </>
+            )}
           </motion.div>
         </AnimatePresence>
 
@@ -328,7 +347,7 @@ export function BookingForm() {
               ) : (
                 <Send className="size-4" />
               )}
-              Send Inquiry
+              SUBMIT
             </Button>
           ) : (
             <Button type="button" onClick={next} className="gap-2 font-semibold">
@@ -503,11 +522,11 @@ function Step2({ register, control, errors }: StepProps) {
   );
 }
 
-function Step3({ control, errors, setValue }: StepProps) {
+function Step3({ control, setValue }: StepProps) {
   const repertoire = useWatch({ control, name: "repertoire" });
   const setLengthOptions =
     repertoire === "Original Music"
-      ? (["2 hours"] as const)
+      ? ([TWO_HOUR_SET_LENGTH] as const)
       : SET_LENGTH_OPTIONS;
 
   return (
@@ -553,49 +572,26 @@ function Step3({ control, errors, setValue }: StepProps) {
               />
             )}
           />
-          {repertoire !== "Original Music" && (
-            <Controller
-              control={control}
-              name="customHours"
-              render={({ field }) => (
-                <label className="inline-flex h-10 items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 text-sm font-medium text-foreground/70 transition-colors focus-within:border-primary/60 focus-within:bg-primary/10 focus-within:text-primary">
-                  <Input
-                    type="number"
-                    inputMode="numeric"
-                    min={4}
-                    max={12}
-                    step={1}
-                    aria-label="Custom performance hours"
-                    placeholder="4+"
-                    value={field.value ?? ""}
-                    onChange={(event) => {
-                      const value = event.target.value;
-                      field.onChange(value === "" ? undefined : Number(value));
-                      setValue?.("setLength", undefined, {
-                        shouldDirty: true,
-                        shouldValidate: true,
-                      });
-                    }}
-                    className="h-7 w-12 border-0 bg-transparent p-0 text-center text-sm shadow-none focus-visible:ring-0"
-                  />
-                  <span>hours</span>
-                </label>
-              )}
-            />
-          )}
         </div>
-        {errors?.customHours?.message && (
-          <p className="text-xs text-destructive">{errors.customHours.message}</p>
-        )}
       </Field>
     </>
   );
 }
 
-function Step4({ register, control }: StepProps) {
+function Step4({ register, control, setValue }: StepProps) {
+  const soundProvided = useWatch({ control, name: "soundProvided" });
+  const showBackline =
+    soundProvided === "Venue provides sound" || soundProvided === "Mix of Both";
+
+  useEffect(() => {
+    if (!showBackline) {
+      setValue?.("backline", [], { shouldDirty: true, shouldValidate: true });
+    }
+  }, [setValue, showBackline]);
+
   return (
     <>
-      <Field label="Will the band be providing sound reinforcement?">
+      <Field label="Will the band be providing sound?">
         <Controller
           control={control}
           name="soundProvided"
@@ -604,20 +600,22 @@ function Step4({ register, control }: StepProps) {
           )}
         />
       </Field>
-      <Field label="Backline / gear available on site">
-        <Controller
-          control={control}
-          name="backline"
-          render={({ field }) => (
-            <Pills
-              multi
-              options={BACKLINE_ITEMS}
-              value={field.value}
-              onChange={field.onChange}
-            />
-          )}
-        />
-      </Field>
+      {showBackline && (
+        <Field label="Backline / gear available on site">
+          <Controller
+            control={control}
+            name="backline"
+            render={({ field }) => (
+              <Pills
+                multi
+                options={BACKLINE_ITEMS}
+                value={field.value}
+                onChange={field.onChange}
+              />
+            )}
+          />
+        </Field>
+      )}
       <Field label="Stage size / load-in notes">
         <Textarea
           rows={3}

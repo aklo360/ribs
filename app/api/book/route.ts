@@ -1,9 +1,23 @@
 import { NextResponse } from "next/server";
-import { bookingSchema } from "@/lib/booking-schema";
+import {
+  bookingSchema,
+  FOUR_HOUR_SET_LENGTH,
+  TWO_HOUR_SET_LENGTH,
+} from "@/lib/booking-schema";
 import { estimateBookingQuote } from "@/lib/booking-quote";
+import { SITE } from "@/lib/content";
 
 // Edge-safe: uses only fetch + Web APIs, so it runs in dev and on Cloudflare Pages.
 export const runtime = "edge";
+
+export async function GET() {
+  return NextResponse.json({
+    ok: true,
+    bookingEmail: SITE.bookingEmail,
+    emailConfigured: Boolean(process.env.RESEND_API_KEY),
+    fromConfigured: Boolean(process.env.BOOKING_FROM_EMAIL),
+  });
+}
 
 function row(label: string, value: unknown): string {
   if (value === undefined || value === null || value === "") return "";
@@ -48,7 +62,10 @@ export async function POST(request: Request) {
 
   const b = parsed.data;
   const quote = estimateBookingQuote(b);
-  const performanceLength = b.customHours ? `${b.customHours} hours` : b.setLength;
+  const performanceLength =
+    b.repertoire === "Original Music"
+      ? TWO_HOUR_SET_LENGTH
+      : (b.setLength ?? (b.customHours === 4 ? FOUR_HOUR_SET_LENGTH : undefined));
 
   // Honeypot — silently accept bots without sending.
   if (b.company_website) {
@@ -79,7 +96,7 @@ export async function POST(request: Request) {
           ${row("Set length", performanceLength)}
           ${row("Repertoire", b.repertoire)}
           ${row("Live estimate shown", quote.label)}
-          ${row("Sound/PA", b.soundProvided)}
+          ${row("Sound", b.soundProvided)}
           ${row("Backline", b.backline)}
           ${row("Power on stage", b.powerAvailable)}
           ${row("Overhead coverage/shade", b.overheadCoverage)}
@@ -95,12 +112,12 @@ export async function POST(request: Request) {
   </div>`;
 
   const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.BOOKING_TO_EMAIL;
-  const from = process.env.BOOKING_FROM_EMAIL ?? "bookings@rootsinbluestone.com";
+  const to = SITE.bookingEmail;
+  const from = process.env.BOOKING_FROM_EMAIL ?? "onboarding@resend.dev";
 
-  // Graceful no-op when not configured (keeps local/dev + previews working).
-  if (!apiKey || !to) {
-    console.log("[booking] Inquiry received (email not configured):", {
+  // Do not show a fake success on production if email delivery is not wired.
+  if (!apiKey) {
+    console.warn("[booking] Email delivery is not configured:", {
       name: b.name,
       email: b.email,
       eventType: b.eventType,
@@ -109,7 +126,12 @@ export async function POST(request: Request) {
       estimate: quote.label,
       budget: b.budget,
     });
-    return NextResponse.json({ ok: true, delivered: false });
+    return NextResponse.json(
+      {
+        error: `Booking email is not connected yet. Please email ${SITE.bookingEmail} directly.`,
+      },
+      { status: 503 }
+    );
   }
 
   const res = await fetch("https://api.resend.com/emails", {

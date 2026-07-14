@@ -24,7 +24,7 @@ export function Hero() {
     release: latest,
     playing,
     currentTime,
-    duration,
+    displayDuration,
     progress,
     play,
     toggle,
@@ -112,7 +112,7 @@ export function Hero() {
             <div className="mb-3 flex items-center gap-2 px-1">
               <span className="size-1.5 rounded-full bg-foreground/70" />
               <span className="font-mono text-[0.65rem] uppercase tracking-[0.28em] text-foreground/55">
-                Latest Release
+                {latest.featured ? "Latest Release" : "Now Playing"}
               </span>
             </div>
             <TiltCard>
@@ -206,7 +206,7 @@ export function Hero() {
                           </div>
                           <div className="mt-2 flex justify-between font-mono text-[10px] tabular-nums text-foreground/45">
                             <span>{fmt(currentTime)}</span>
-                            <span>{fmt(duration)}</span>
+                            <span>{fmt(displayDuration)}</span>
                           </div>
                         </div>
                       </div>

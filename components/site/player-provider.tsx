@@ -11,6 +11,8 @@ import {
 } from "react";
 import { RELEASES, type Release } from "@/lib/content";
 
+const PREVIEW_DURATION_FALLBACK = 30;
+
 type WindowWithWebkitAudio = Window &
   typeof globalThis & {
     webkitAudioContext?: typeof AudioContext;
@@ -18,27 +20,38 @@ type WindowWithWebkitAudio = Window &
 
 type PlayerContextValue = {
   release: Release;
+  releaseIndex: number;
   audioElement: HTMLAudioElement | null;
   analyser: AnalyserNode | null;
   playing: boolean;
   currentTime: number;
   duration: number;
+  displayDuration: number;
   progress: number;
   dismissed: boolean;
   play: () => void;
   pause: () => void;
   toggle: () => void;
+  restart: () => void;
   dismiss: () => void;
+  selectRelease: (index: number) => void;
   seekToRatio: (ratio: number) => void;
 };
 
 const PlayerContext = createContext<PlayerContextValue | null>(null);
 
+function measuredDuration(audio: HTMLAudioElement) {
+  return Number.isFinite(audio.duration) && audio.duration > 0 ? audio.duration : 0;
+}
+
 export function PlayerProvider({ children }: { children: ReactNode }) {
-  const release = useMemo(
-    () => RELEASES.find((r) => r.featured) ?? RELEASES[0],
+  const featuredIndex = useMemo(
+    () => Math.max(0, RELEASES.findIndex((r) => r.featured)),
     []
   );
+  const [releaseIndex, setReleaseIndex] = useState(featuredIndex);
+  const activeReleaseIndex = RELEASES[releaseIndex] ? releaseIndex : featuredIndex;
+  const release = RELEASES[activeReleaseIndex] ?? RELEASES[0];
   const audioRef = useRef<HTMLAudioElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
@@ -53,8 +66,11 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     const audio = audioRef.current;
     if (!audio) return;
 
-    const onTime = () => setCurrentTime(audio.currentTime);
-    const onMeta = () => setDuration(audio.duration || 0);
+    const syncTime = () => {
+      setCurrentTime(audio.currentTime || 0);
+      setDuration(measuredDuration(audio));
+    };
+    const syncDuration = () => setDuration(measuredDuration(audio));
     const onPlay = () => setPlaying(true);
     const onPause = () => setPlaying(false);
     const onEnd = () => {
@@ -62,14 +78,23 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       setCurrentTime(0);
     };
 
-    audio.addEventListener("timeupdate", onTime);
-    audio.addEventListener("loadedmetadata", onMeta);
+    audio.addEventListener("timeupdate", syncTime);
+    audio.addEventListener("loadedmetadata", syncDuration);
+    audio.addEventListener("loadeddata", syncDuration);
+    audio.addEventListener("durationchange", syncDuration);
+    audio.addEventListener("canplay", syncDuration);
     audio.addEventListener("play", onPlay);
     audio.addEventListener("pause", onPause);
     audio.addEventListener("ended", onEnd);
+
+    syncTime();
+
     return () => {
-      audio.removeEventListener("timeupdate", onTime);
-      audio.removeEventListener("loadedmetadata", onMeta);
+      audio.removeEventListener("timeupdate", syncTime);
+      audio.removeEventListener("loadedmetadata", syncDuration);
+      audio.removeEventListener("loadeddata", syncDuration);
+      audio.removeEventListener("durationchange", syncDuration);
+      audio.removeEventListener("canplay", syncDuration);
       audio.removeEventListener("play", onPlay);
       audio.removeEventListener("pause", onPause);
       audio.removeEventListener("ended", onEnd);
@@ -125,31 +150,60 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     play();
   };
 
+  const restart = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.currentTime = 0;
+    setCurrentTime(0);
+  };
+
   const dismiss = () => {
     pause();
     setDismissed(true);
   };
 
+  const selectRelease = (index: number) => {
+    const nextIndex = (index + RELEASES.length) % RELEASES.length;
+
+    audioRef.current?.pause();
+    setPlaying(false);
+    setCurrentTime(0);
+    setDuration(0);
+    setDismissed(false);
+    setReleaseIndex(nextIndex);
+  };
+
+  const displayDuration =
+    duration || (release.previewUrl ? PREVIEW_DURATION_FALLBACK : 0);
+
   const seekToRatio = (ratio: number) => {
     const audio = audioRef.current;
-    if (!audio || !duration) return;
+    if (!audio || !displayDuration) return;
     const clamped = Math.min(1, Math.max(0, ratio));
-    audio.currentTime = clamped * duration;
+    const nextTime = clamped * displayDuration;
+    audio.currentTime = nextTime;
+    setCurrentTime(nextTime);
   };
 
   const value = {
     release,
+    releaseIndex: activeReleaseIndex,
     audioElement,
     analyser,
     playing,
     currentTime,
     duration,
-    progress: duration ? (currentTime / duration) * 100 : 0,
+    displayDuration,
+    progress: displayDuration
+      ? Math.min(100, (currentTime / displayDuration) * 100)
+      : 0,
     dismissed,
     play,
     pause,
     toggle,
+    restart,
     dismiss,
+    selectRelease,
     seekToRatio,
   };
 
@@ -163,7 +217,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
             setAudioElement(node);
           }}
           src={release.previewUrl}
-          preload="none"
+          preload="metadata"
           crossOrigin="anonymous"
         />
       )}

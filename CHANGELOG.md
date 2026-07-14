@@ -1,5 +1,180 @@
 # Changelog — Roots in Blue Stone (RIBS)
 
+## 2026-07-14 — Booking email delivery guard
+
+- Confirmed the production Cloudflare Pages project only has the Mailchimp newsletter secrets configured; `RESEND_API_KEY` is missing, so booking submissions could be accepted by the form without actual email delivery.
+- Updated `app/api/book/route.ts` so missing booking-email configuration returns HTTP 503 with the direct booking email instead of a fake success.
+- Added a lightweight `GET /api/book` health response that reports whether booking email delivery is configured, without exposing any secret values.
+- Updated the booking form client to display the API's real error message and direct users to `rootsinbluestone@gmail.com` if booking email delivery is not connected.
+- Removed the booking quote note `Travel may adjust the final quote.` from the shared quote calculator.
+- Consolidated booking event-type buttons to `Public Event`, `Private / Corporate Event`, `Wedding`, `Fundraiser`, and `Other`, while keeping server-side compatibility for old event labels from stale browser tabs.
+- Applied a 10% discount to the displayed quote estimate when `Fundraiser` is selected, including the legacy `Festival / Fundraiser` value.
+- Updated `Not sure — recommend one` lineup estimates to show the full scenario range from Duo through 7-Piece instead of falling back to Duo pricing.
+- Changed the two-hour set-length option label to `≤ 2 hours`, kept legacy `2 hours` submissions valid, and made repertoire informational for pricing. `Original Music` now only caps the effective set length at `≤ 2 hours`.
+- Replaced the freeform custom-hours input with a fixed `4 hours` option, making 4 hours the maximum selectable set length. Legacy `customHours` submissions now validate only when the value is exactly 4.
+- Restored the quote maximum behavior after the public-event minimum reduction: set-length choices preserve the configured maximums, so Public Event Duo at `≤ 2 hours` now shows `$500-$1,200` instead of compressing to `$500-$900`.
+- Simplified the booking form sound question to `Will the band be providing sound?`, renamed the visible band-supplied option to `Band provides sound`, replaced the visible `Unsure` sound option with `Mix of Both`, and made that mixed option widen the quote estimate by keeping the no-PA lower bound while using the band-provided-sound upper bound. Legacy `Band provides PA / sound` and `Unsure` submissions remain valid for stale browser tabs.
+- Hid the `Backline / gear available on site` selector unless the sound answer is `Venue provides sound` or `Mix of Both`, added `Partial PA / Sound System` next to `Full PA / Sound System`, and cleared hidden gear selections when clients switch to `Band provides sound`.
+- Renamed the final booking form action button to `SUBMIT`.
+- Collapsed the booking flow from 5 displayed steps to 4 by moving budget/details onto the final sound/details screen, so the progress bar is full on `Step 4 of 4` before submitting.
+- Verification: Cloudflare Pages secret-name audit, local no-Resend POST returned HTTP 503 with the direct-email message, direct quote/schema probes confirmed preserved maximums, `4 hours` pricing, widened mixed-sound ranges, and rejection of `customHours: 5`, `npm run lint`, and `npm run build` passed.
+- Remaining setup: add a transactional email sender secret, preferably `RESEND_API_KEY`, and configure `BOOKING_FROM_EMAIL` once a verified sender/domain is available. Mailchimp Marketing is still only for newsletter audience signups, not contact-form delivery.
+
+## 2026-07-13 — Tip jar paused before launch
+
+- Removed the virtual tip jar from the live site for now.
+- Removed the tip-jar nav item, homepage tip-jar band, hero CTA, booking-section chip, and footer CTA.
+- Deleted the now-unused tip-jar components so the Venmo link is not shipped in the app bundle.
+- Built and deployed the tip-jar-free site separately to Cloudflare Pages `staging` and `main`, preserving staging for development and production for launch.
+- Verified both live aliases return HTTP 200, both newsletter API routes still validate through `/api/newsletter`, and no tip-jar/Venmo strings remain in live production, live staging, or the generated Cloudflare output.
+- Production custom domain/DNS cutover is still pending; the Pages project currently exposes the production build at `https://roots-in-blue-stone.pages.dev`.
+
+## 2026-07-13 — Wix contact export audit
+
+- Audited the Wix contacts export at `/Users/llphant/Downloads/contacts.csv` against the Roots In Blue Stone Mailchimp audience.
+- The export had 213 rows, 42 valid unique email addresses, and 31 contacts marked `Subscribed`.
+- Skipped the 9 `Never subscribed` contacts and 2 `Unsubscribed` contacts.
+- All 31 subscribed Wix contacts were already present in Mailchimp, so no new contacts were added and no duplicate contacts were imported.
+
+## 2026-07-13 — Mailchimp newsletter integration
+
+- Replaced the optimistic public Mailchimp embedded-form submission with a server-side `POST /api/newsletter` route.
+- The newsletter route adds subscribers to the configured Mailchimp audience with the API key kept in server-side Cloudflare Pages secrets.
+- Updated the homepage newsletter form to call the local API route, show real error states, handle already-subscribed contacts, and show double-opt-in confirmation copy when Mailchimp returns `pending`.
+- Added a hidden honeypot field for basic bot filtering.
+- Added the previous site's public Mailchimp connected-site loader through `next/script` so Mailchimp can recognize the new site without replacing the custom RIBS newsletter UI.
+- Documented the required Mailchimp Pages secrets: `MAILCHIMP_API_KEY` and `MAILCHIMP_AUDIENCE_ID`, plus optional `MAILCHIMP_SERVER_PREFIX`, `MAILCHIMP_SUBSCRIBE_STATUS`, and `MAILCHIMP_TAGS`.
+- Configured the Cloudflare Pages production secrets `MAILCHIMP_API_KEY` and `MAILCHIMP_AUDIENCE_ID` for the `roots-in-blue-stone` project, using the Roots In Blue Stone Mailchimp audience. Secret values were not printed or committed.
+
+## 2026-07-12 — Virtual tip jar
+
+- Added a site-wide virtual tip jar using the public Venmo destination currently exposed through the band's Linktree: `https://www.venmo.com/u/waltanamo`.
+- Centralized the payment destination in `SITE.tipJar` so the label, service, handle, or URL can be changed from `lib/content.ts`.
+- Added a homepage tip-jar band after tour dates, plus compact CTAs in the hero, booking contact chips, footer, and navigation.
+
+## 2026-07-10 — Booking email destination fix
+
+- Changed the public booking/contact email to `rootsinbluestone@gmail.com`.
+- Updated the booking section and footer contact links through `SITE.bookingEmail`.
+- Updated the booking API route so form submissions send to `rootsinbluestone@gmail.com` directly, instead of relying on an environment variable that could still point at an old address.
+- Removed stale recipient setup references from project docs and local context.
+
+## 2026-07-10 — Tour price labels and official Bandsintown API support
+
+- Added a `priceLabel` field to `lib/tour.ts` and rendered a small price chip next to each tour RSVP button.
+- Set current tour labels to `Free` for all listed shows except the July 26, 2026 Mountain View Vineyard, Winery & Brewery show, which is labeled `$20`.
+- Updated the tour sync normalizer to preserve manual paid price labels and automatically recognize free Bandsintown offers when the source marks an event as free.
+- Updated `scripts/tour-sync.mjs`, package scripts, and `.github/workflows/bandsintown-sync.yml` so `BANDSINTOWN_APP_ID` uses the official Bandsintown for Artists API endpoint for artist ID `15511983`, while the verified widget all-events feed remains the fallback when no official key is configured.
+- Important secret handling note: the Bandsintown API key is not committed. Store it as the GitHub Secret `BANDSINTOWN_APP_ID` and rotate it if the previously shared value should be considered exposed.
+
+## 2026-07-10 — Full Bandsintown all-events scrape
+
+- Rechecked Bandsintown using the widget JavaScript endpoint instead of the location-filtered artist page. The verified all-upcoming feed is `https://rest.bandsintown.com/V3.1/artists/Roots%20in%20Blue%20Stone/events/?app_id=js_roots-in-blue-stone.pages.dev`.
+- Confirmed Bandsintown currently returns 15 upcoming Roots In Blue Stone events, not 14.
+- Added the missing July 25, 2026 show to `lib/tour.ts`: `RIBS @ Jam Below The Dam`, White Haven, PA, Bandsintown event ID `107919906`.
+- Updated the tour sync workflow and npm scripts to fetch the verified all-events feed by default; `BANDSINTOWN_EVENTS_URL` is now only an override secret, not a required source secret.
+- Canonicalized Bandsintown event URLs during normalization so tracking query params do not create noisy PR diffs, ignored same-day `ends_at` values as non-multi-day events, and preserved existing curated venue/note text when merging full-feed data.
+- Verification: `npm run tour:validate` now reports 15 shows; file-based full-feed sync reports 15 incoming / 15 current / 0 changes; live `npm run tour:sync` passed outside the sandbox after sandbox DNS failures; `npm run lint`, `npm run build`, and `npm run cf:build` passed.
+
+## 2026-07-10 — Bandsintown autonomous PR sync
+
+- Implemented the reviewed Bandsintown tour-date sync pipeline from `plans/bandsintown-sync-listener.md`.
+- Added `scripts/tour-lib.mjs` and `scripts/tour-sync.mjs` to parse the current `lib/tour.ts` show array without executing it, normalize Bandsintown-style event JSON, validate dates/venues/statuses/URLs, merge new and changed shows, render a clean `SHOWS` diff, and produce PR summary artifacts.
+- Added valid and invalid fixtures under `scripts/fixtures/` plus package scripts `tour:validate`, `tour:sync`, and `tour:sync:write`.
+- Added `scripts/notify-llphant-tg.mjs` for optional LLPhant Telegram PR/failure alerts using GitHub Secrets, without committing bot tokens, chat IDs, or thread IDs.
+- Added `.github/workflows/bandsintown-sync.yml`, a daily/manual GitHub Actions listener that fetches the verified Bandsintown all-events feed by default, optionally uses `BANDSINTOWN_EVENTS_URL` / `BANDSINTOWN_AUTH_TOKEN` overrides, validates updates, runs lint/build on changes, opens or updates an automated tour-date PR, and alerts LLPhant on Telegram when a PR is created.
+- Default sync mode merge-preserves existing tour entries that are missing from the incoming source; explicit `--replace` / workflow `replace` input is available for deliberate full-source replacement.
+- Configured RIBS GitHub Secrets for LLPhant Telegram alerts: `TELEGRAM_BOT_TOKEN_LLPHANT`, `LLPHANT_TG_CHAT_ID`, and `LLPHANT_TG_THREAD_ID`, without printing secret values or sending a live alert.
+- Confirmed the old public Bandsintown REST endpoint and artist page are still not usable as direct scrape sources: REST returned `403 MissingAuthenticationTokenException`, and the public artist page returned HTTP 403 from shell access. The later all-events widget endpoint supersedes this as the default source.
+- Verification: `npm run tour:validate`, fixture dry-run, invalid fixture failure, temp-copy write-mode diff, missing-source no-op, Telegram alert missing-secret no-op, `npm run lint`, `npm run build`, and `npm run cf:build` all passed locally.
+
+## 2026-07-10 — Bandsintown sync listener plan
+
+- Added `plans/bandsintown-sync-listener.md`, a full ExecPlan for a reviewed Bandsintown tour-date sync listener.
+- The plan keeps `lib/tour.ts` as the website source of truth, adds Node-based parsing/validation/sync scripts, and uses a manual/scheduled GitHub Actions workflow to open reviewable tour-date PRs when Bandsintown event data changes.
+- Captured the key constraint at the time: blind public artist-page scraping was blocked, so the integration needed a stable JSON source and review gate. The later all-events widget feed discovery now provides that source.
+
+## 2026-07-10 — OG card and metadata correction
+
+- Updated the root metadata title/OG/Twitter title to exactly `Roots in Blue Stone · Originals & Covers · Groove, Grit & Good Vibes`, and changed child-page title templates to the same middle-dot separator style.
+- Replaced the generated TSX Open Graph/Twitter image routes with static 1200x630 PNG cards in `public/img/social/` so the artwork is deterministic, social-safe, and compatible with Cloudflare Pages.
+- Restored the Break Down cover art to the right side of the share card, kept the band logo on the left, and rendered the tagline with the same Syne display font used by the website.
+- Refined the share-card composition after staging review: removed the left-side frame/hairline treatment so it no longer reads like a second cover-art panel, reduced the tagline size, and aligned the logo/tagline against a cleaner left-column grid.
+- Vertically centered the left logo/subtitle group in the share-card layout while keeping the right cover art fixed.
+- Pointed Twitter metadata at the same refreshed `og-card.png` asset as Open Graph to avoid stale preview-card caching on the separate Twitter image path.
+- Forced the `/book` page metadata title, Open Graph title, and Twitter title to the same exact `Roots in Blue Stone · Originals & Covers · Groove, Grit & Good Vibes` string so page-level metadata does not override the share title.
+- Added `scripts/generate-og-card.mjs` plus the local Syne OFL font asset used to regenerate the card with a bounded headless Chrome screenshot.
+- Verification: local browser-rendered card visually inspected; `npm run lint`, staging-aware `npm run build`, and staging-aware `npm run cf:build` passed. Deployed to the Cloudflare Pages `staging` alias at https://staging.roots-in-blue-stone.pages.dev.
+
+## 2026-07-10 — Full-screen video lightbox
+
+- Enlarged the YouTube lightbox player from the small `max-w-3xl` dialog to a viewport-sized 16:9 modal capped at `96vw` by `92svh`, so clicked videos open nearly full-screen on desktop and landscape screens while staying responsive on mobile.
+- Verification: `npm run lint`, staging-aware `npm run build`, and staging-aware `npm run cf:build` passed; staging deployed to https://staging.roots-in-blue-stone.pages.dev and returned HTTP 200.
+
+## 2026-07-10 — Simplified hero-style share card
+
+- Reworked the generated Open Graph / Twitter image card to use a black background, the band logo on the left, and only the visible text `Groove, Grit & Good Vibes`, matching the homepage hero tagline.
+- Removed the Break Down cover art, release label, originals/covers line, and genre copy from the share-card artwork.
+- Verification: `npm run lint` and staging-aware `npm run build` passed; generated Open Graph and Twitter image bodies are valid 1200x630 PNGs; visual inspection confirmed the black hero-style card composition.
+
+## 2026-07-10 — Staging OG metadata host fix
+
+- Made root metadata resolve canonical, Open Graph, and Twitter image URLs from `NEXT_PUBLIC_SITE_URL` / `CF_PAGES_URL` at build time instead of always using the production `SITE.url`.
+- Replaced em dashes in exported metadata titles, templates, alt text, and booking-page description with plain hyphen/prose copy.
+- Rebuilt the Cloudflare Pages bundle with `NEXT_PUBLIC_SITE_URL=https://staging.roots-in-blue-stone.pages.dev` so staging share tags point to staging image routes.
+- Verification: `npm run lint`, staging-aware `npm run build`, and staging-aware `npm run cf:build` passed; staging deployed to https://staging.roots-in-blue-stone.pages.dev; live metadata assertion confirmed staging canonical/OG/Twitter image URLs, no em/en dashes in metadata tags, and 200 responses from `/opengraph-image` and `/twitter-image`.
+
+## 2026-07-10 — Share card and music player sync
+
+- Replaced `app/favicon.ico` with a multi-size favicon generated from the Break Down cover art.
+- Added generated Open Graph and Twitter share cards using the Break Down cover art and site logo, and updated root metadata away from the stale `/og.png` image.
+- Reworked the Music section preview controls to use the shared `PlayerProvider`, so the Music play/progress bar, hero player, and sticky footer player all reflect the same audio state.
+- Removed `Santa Claus Is Coming To Town` from the Music release carousel.
+- Verification: favicon file probe confirmed a 4-size ICO; release source check confirmed 8 Music releases without `Santa Claus Is Coming To Town`; generated Open Graph and Twitter image bodies are 1200x630 PNGs; `npm run lint`, `npm run build`, and `npm run cf:build` passed; staging deployed to https://staging.roots-in-blue-stone.pages.dev and returned HTTP 200.
+
+## 2026-07-10 — Gallery curation pass
+
+- Removed the requested carousel positions from the rendered gallery without deleting source files: 20-27, 29, 39, 42, 45, 56-63, 79, 80, 85, 87-90, and 92-100.
+- Rendered gallery count is now 66 images.
+- Verification: direct gallery count probe returned 66 images; `npm run lint`, `npm run build`, and `npm run cf:build` passed; staging deployed to https://staging.roots-in-blue-stone.pages.dev and returned HTTP 200.
+
+## 2026-07-10 — Gallery thumbnail tracking
+
+- Updated the gallery carousel thumbnail rail so the active thumbnail auto-scrolls into the center as users move through photos with arrows, keyboard, or thumbnail clicks.
+- Verification: source check confirmed the active thumbnail refs drive rail scrolling; `npm run lint` and `npm run build` passed.
+
+## 2026-07-10 — Custom-hours quote tuning
+
+- Updated the live booking quote calculator so 4+ hour custom performance lengths increase both the lower and upper estimate range as hours increase.
+- Removed the custom-hours and band-provided-sound explanatory estimate note pills from the shared quote output, so they no longer appear on the homepage booking form or `/book`.
+- Verification: direct quote probes confirmed 4/5/6/8-hour custom ranges change dynamically and the removed note text is absent; `npm run lint` and `npm run build` passed.
+
+## 2026-07-08 — Walter launch notes pass
+
+- Confirmed the site was using a static `lib/tour.ts` list, not a live Bandsintown API pull. Direct unauthenticated Bandsintown API requests returned authorization errors, and the public artist page was not reliable for shell scraping.
+- Refreshed `lib/tour.ts` from accessible Shazam/Bandsintown-derived event listings with 14 upcoming shows from July 10, 2026 through December 19, 2026, removing stale June/early-July and incorrect edited dates.
+- Updated About "Available as" labels to `Duo`, `4 Piece`, `5 Piece`, `7 Piece`; removed `Trio` from the public lineup display.
+- Lowered public-show quote minimums in `lib/booking-quote.ts` per Walter's bar/restaurant guidance: Duo $500, 4-Piece $800, 5-Piece $1,000, and 7-Piece $1,400. Private, festival, and wedding ranges were left unchanged pending discussion.
+- Removed the generic booking-estimate note pills prompting users to choose a lineup size or performance length.
+- Added a production launch checklist plan at `plans/production-launch.md`.
+- Verification: `npm run lint` and `npm run build` passed.
+
+## 2026-07-03 — Launch polish and staging deploy
+
+- Fixed the mobile hamburger menu logo so the sheet's flex-column layout no longer stretches the wordmark horizontally.
+- Repaired the npm lockfile with `npm install`, restoring local lint/build/deploy commands after `npm ci` failed on missing `@emnapi` entries.
+- Built and deployed the current worktree to the Cloudflare Pages `staging` branch alias: https://staging.roots-in-blue-stone.pages.dev.
+- Restored the gallery carousel to the deterministic reverse-chronological `GALLERY` order and removed the per-refresh random shuffle.
+- Redeployed the staging branch alias after restoring the gallery order.
+
+## 2026-07-02 — Gallery dedupe
+
+- Removed repeated photos from the rendered gallery without deleting source image files. The gallery now keeps the highest-quality Walter Drive versions for repeated site photos, keeps the six unique original site photos, and excludes the duplicated zip tail (`ribs-zip-085` through `ribs-zip-100`).
+- Also excluded `ribs-zip-060` as a same-pose repeat of `ribs-zip-059`.
+- Visible gallery count is now 102 unique entries instead of 132.
+- Gallery carousel uses the deduped reverse-chronological photo order without randomizing on refresh.
+- About now uses an explicit duo portrait (`/gallery/g09.jpg`) instead of a fragile gallery index, replacing the empty stage-light shot with a clearer Walter/Ian mountain portrait.
+
 ## 2026-06-28 — Break Down latest release + all-release music carousel
 
 - Verified the actual latest Roots In Blue Stone release against current public Apple Music/iTunes metadata: **Break Down - Single**, released May 15, 2026. Walter's shared Drive folder, accessed through `aklonyc@gmail.com` Drive-only auth, also contains `RIBS SINGLE ART/Break Down Art.webp`, confirming the artwork identity; the Drive file is only 320px, so the site uses the verified 1200px Apple Music artwork locally.

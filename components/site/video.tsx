@@ -88,10 +88,13 @@ export function Video() {
 
       {/* Lightbox player */}
       <Dialog open={!!active} onOpenChange={(o) => !o && setActive(null)}>
-        <DialogContent className="max-w-3xl border-white/10 bg-popover p-2">
+        <DialogContent
+          className="max-w-none overflow-hidden border-white/10 bg-black p-0"
+          style={{ width: "min(96vw, calc(92svh * 16 / 9))" }}
+        >
           <DialogTitle className="sr-only">{active?.title}</DialogTitle>
           {active && (
-            <div className="aspect-video w-full overflow-hidden rounded-lg">
+            <div className="aspect-video w-full overflow-hidden">
               <iframe
                 title={active.title}
                 src={`https://www.youtube.com/embed/${active.id}?autoplay=1`}

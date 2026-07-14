@@ -2,7 +2,7 @@ import { Users } from "lucide-react";
 import { Section } from "./section";
 import { Reveal } from "./reveal";
 import { SmartImage } from "./smart-image";
-import { BIO, MEMBERS, LINEUPS, GALLERY } from "@/lib/content";
+import { ABOUT_IMAGE, BIO, MEMBERS, LINEUPS } from "@/lib/content";
 
 export function About() {
   return (
@@ -44,8 +44,8 @@ export function About() {
 
         <Reveal delay={0.1}>
           <SmartImage
-            src={GALLERY[13]}
-            alt="Roots in Blue Stone"
+            src={ABOUT_IMAGE}
+            alt="Walter Lee and Ian Kirk of Roots in Blue Stone"
             seed={2}
             className="aspect-[4/5] w-full rounded-xl object-cover"
           />

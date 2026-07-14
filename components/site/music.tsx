@@ -16,6 +16,7 @@ import { SmartImage } from "./smart-image";
 import { Badge } from "@/components/ui/badge";
 import { RELEASES } from "@/lib/content";
 import { STREAM_ICONS } from "./icons";
+import { usePlayer } from "./player-provider";
 import { cn } from "@/lib/utils";
 
 function fmt(seconds: number) {
@@ -26,18 +27,23 @@ function fmt(seconds: number) {
 }
 
 export function Music() {
-  const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
-  const [playing, setPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const audioRef = useRef<HTMLAudioElement>(null);
   const thumbnailStripRef = useRef<HTMLDivElement>(null);
   const thumbnailRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const {
+    release,
+    releaseIndex: index,
+    playing,
+    currentTime,
+    displayDuration,
+    progress,
+    toggle,
+    restart,
+    selectRelease,
+    seekToRatio,
+  } = usePlayer();
 
-  const release = RELEASES[index];
   const total = RELEASES.length;
-  const progress = duration ? (currentTime / duration) * 100 : 0;
   const platforms = useMemo(
     () =>
       release.platforms?.length
@@ -49,37 +55,13 @@ export function Music() {
   );
 
   const go = (nextIndex: number) => {
-    audioRef.current?.pause();
-    setPlaying(false);
-    setCurrentTime(0);
-    setDuration(0);
+    const normalizedIndex = (nextIndex + total) % total;
     setDirection(nextIndex > index ? 1 : -1);
-    setIndex((nextIndex + total) % total);
+    selectRelease(normalizedIndex);
   };
 
   const next = () => go(index + 1);
   const prev = () => go(index - 1);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    const onTime = () => setCurrentTime(audio.currentTime);
-    const onMeta = () => setDuration(audio.duration || 0);
-    const onEnd = () => {
-      setPlaying(false);
-      setCurrentTime(0);
-    };
-
-    audio.addEventListener("timeupdate", onTime);
-    audio.addEventListener("loadedmetadata", onMeta);
-    audio.addEventListener("ended", onEnd);
-    return () => {
-      audio.removeEventListener("timeupdate", onTime);
-      audio.removeEventListener("loadedmetadata", onMeta);
-      audio.removeEventListener("ended", onEnd);
-    };
-  }, [release.previewUrl]);
 
   useEffect(() => {
     const strip = thumbnailStripRef.current;
@@ -92,31 +74,10 @@ export function Music() {
     });
   }, [index]);
 
-  const toggle = () => {
-    const audio = audioRef.current;
-    if (!audio || !release.previewUrl) return;
-
-    if (playing) {
-      audio.pause();
-      setPlaying(false);
-      return;
-    }
-
-    audio.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
-  };
-
-  const restart = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    audio.currentTime = 0;
-    setCurrentTime(0);
-  };
-
   const seek = (event: React.MouseEvent<HTMLDivElement>) => {
-    const audio = audioRef.current;
-    if (!audio || !duration) return;
+    if (!displayDuration) return;
     const rect = event.currentTarget.getBoundingClientRect();
-    audio.currentTime = ((event.clientX - rect.left) / rect.width) * duration;
+    seekToRatio((event.clientX - rect.left) / rect.width);
   };
 
   return (
@@ -214,14 +175,14 @@ export function Music() {
                             Preview
                           </p>
                           <span className="font-mono text-[10px] tabular-nums text-foreground/45">
-                            {fmt(currentTime)} / {fmt(duration)}
+                            {fmt(currentTime)} / {fmt(displayDuration)}
                           </span>
                         </div>
                         <div
                           onClick={seek}
                           className={cn(
                             "h-1.5 rounded-full bg-white/15",
-                            duration && "cursor-pointer"
+                            displayDuration && "cursor-pointer"
                           )}
                         >
                           <div
@@ -242,7 +203,7 @@ export function Music() {
                     </div>
 
                     {release.previewUrl && (
-                      <audio ref={audioRef} src={release.previewUrl} preload="metadata" />
+                      <span className="sr-only">Preview available</span>
                     )}
                   </div>
 

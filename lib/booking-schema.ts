@@ -75,24 +75,6 @@ export const BACKLINE_ITEMS = [
   "Lighting",
 ] as const;
 
-export const BUDGET_RANGES = [
-  "Under $1,000",
-  "$1,000 – $2,500",
-  "$2,500 – $5,000",
-  "$5,000 – $10,000",
-  "$10,000+",
-  "Flexible / Let's talk",
-] as const;
-
-export const HEARD_OPTIONS = [
-  "Saw them live",
-  "Spotify / Streaming",
-  "Social media",
-  "Referral",
-  "Search",
-  "Other",
-] as const;
-
 export const bookingSchema = z.object({
   // Contact
   name: z.string().min(2, "Please enter your name"),
@@ -136,12 +118,8 @@ export const bookingSchema = z.object({
   powerAvailable: z.boolean().default(false),
   overheadCoverage: z.boolean().default(false),
 
-  // Logistics & budget
-  budget: z.enum(BUDGET_RANGES).optional(),
-  travelLodging: z.boolean().default(false),
-  formalDress: z.boolean().default(false),
+  // Additional notes
   message: z.string().optional(),
-  heardFrom: z.enum(HEARD_OPTIONS).optional(),
 
   // Honeypot (anti-spam — must stay empty)
   company_website: z.string().max(0).optional(),
@@ -163,8 +141,6 @@ export const bookingDefaults: Partial<BookingInput> = {
   stageNotes: "",
   powerAvailable: false,
   overheadCoverage: false,
-  travelLodging: false,
-  formalDress: false,
   message: "",
   company_website: "",
 };

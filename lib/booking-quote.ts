@@ -144,11 +144,6 @@ function adjustedLineupRange(
     max *= 1.2;
   }
 
-  if (input.formalDress) {
-    min *= 1.06;
-    max *= 1.1;
-  }
-
   return { min, max };
 }
 
@@ -201,10 +196,6 @@ export function estimateBookingQuote(input: Partial<BookingInput>): BookingQuote
   const audience = Number.parseInt(String(input.audienceSize ?? "").replace(/\D/g, ""), 10);
   if (Number.isFinite(audience) && audience >= 300) {
     notes.push("Large attendance can increase production needs.");
-  }
-
-  if (input.formalDress) {
-    notes.push("Formal presentation requirements may carry an additional fee.");
   }
 
   const { min, max } = estimateRange(bucket, input, customHours, audience);

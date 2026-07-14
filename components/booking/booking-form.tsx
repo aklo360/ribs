@@ -46,6 +46,7 @@ import {
 } from "@/lib/booking-schema";
 import { estimateBookingQuote, type BookingQuoteEstimate } from "@/lib/booking-quote";
 import { SITE } from "@/lib/content";
+import { SHOWS } from "@/lib/tour";
 
 /* ---------- small field primitives ---------- */
 
@@ -161,10 +162,15 @@ function Toggle({
 
 const STEPS = [
   { title: "Your details", fields: ["name", "email"] },
-  { title: "The event", fields: ["city"] },
+  { title: "The event", fields: ["city", "region"] },
   { title: "Performance", fields: [] },
   { title: "Sound & details", fields: [] },
 ] as const;
+
+function dateHasBookedShow(date: string | undefined) {
+  if (!date) return false;
+  return SHOWS.some((show) => date >= show.date && date <= (show.endDate ?? show.date));
+}
 
 export function BookingForm() {
   const [step, setStep] = useState(0);
@@ -436,7 +442,9 @@ function Step1({ register, control, errors }: StepProps) {
 
 function Step2({ register, control, errors }: StepProps) {
   const setting = useWatch({ control, name: "setting" });
+  const eventDate = useWatch({ control, name: "eventDate" });
   const isOutdoor = setting === "Outdoor" || setting === "Both / Unsure";
+  const dateConflict = dateHasBookedShow(eventDate);
 
   return (
     <>
@@ -452,6 +460,11 @@ function Step2({ register, control, errors }: StepProps) {
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Event date">
           <Input type="date" {...register("eventDate")} />
+          {dateConflict && (
+            <p className="text-xs font-semibold uppercase tracking-normal text-primary">
+              *POTENTIAL CONFLICT, BAND IS BOOKED ON THIS DATE BUT WILL ACCOMMODATE IF POSSIBLE.
+            </p>
+          )}
         </Field>
         <Controller
           control={control}
@@ -469,7 +482,7 @@ function Step2({ register, control, errors }: StepProps) {
         <Field label="City" required error={errors?.city?.message}>
           <Input placeholder="City" {...register("city")} />
         </Field>
-        <Field label="State / Region">
+        <Field label="State / Region" required error={errors?.region?.message}>
           <Input placeholder="State" {...register("region")} />
         </Field>
         <Field label="Venue name">

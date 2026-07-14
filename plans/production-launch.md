@@ -20,7 +20,7 @@ Roots in Blue Stone needs a production-ready website launch that Walter can trus
 - [ ] Decide whether public minimums should apply only to Bar / Restaurant or also Winery / Brewery and Other public bookings.
 - [ ] Decide the wedding quote path: full form, lighter inquiry path, downloadable package PDF, or a combination.
 - [ ] Decide Printful launch scope: merch link only, embedded store, or full Printful-backed shop integration.
-- [ ] Configure production booking email secrets in Cloudflare Pages without printing secret values.
+- [ ] Enable Mailchimp Transactional/Mandrill, configure production booking email secrets in Cloudflare Pages without printing secret values, and verify `BOOKING_FROM_EMAIL`.
 - [ ] Send test booking submissions from staging and confirm Walter sees the exact email format he wants.
 - [ ] Run final lint, build, and browser checks on staging.
 - [ ] Design a post-launch Bandsintown sync/listener for Roots in Blue Stone artist ID `15511983` so new shows can update the website automatically instead of relying on manual `lib/tour.ts` edits.
@@ -53,7 +53,7 @@ The July 8 pass corrected visible launch blockers in code and captured the remai
 
 ## Context and Orientation
 
-The RIBS site is a Next.js 16 and React 19 app deployed on Cloudflare Pages. Most editable band content lives in `lib/content.ts`. Tour dates live in `lib/tour.ts`. Booking form questions live in `lib/booking-schema.ts` and `components/booking/booking-form.tsx`. Quote estimate math lives in `lib/booking-quote.ts`. Booking emails are sent by `app/api/book/route.ts` through Resend to `rootsinbluestone@gmail.com` when Cloudflare Pages has `RESEND_API_KEY` configured.
+The RIBS site is a Next.js 16 and React 19 app deployed on Cloudflare Pages. Most editable band content lives in `lib/content.ts`. Tour dates live in `lib/tour.ts`. Booking form questions live in `lib/booking-schema.ts` and `components/booking/booking-form.tsx`. Quote estimate math lives in `lib/booking-quote.ts`. Booking emails are sent by `app/api/book/route.ts` to `rootsinbluestone@gmail.com` through Mailchimp Transactional when `MAILCHIMP_TRANSACTIONAL_API_KEY` or `MANDRILL_API_KEY` plus verified `BOOKING_FROM_EMAIL` are configured; Resend remains a fallback when `RESEND_API_KEY` is configured.
 
 The production deploy target is Cloudflare Pages project `roots-in-blue-stone`. Staging is currently the safe review target. Production deploy and DNS cutover are approval-gated.
 
@@ -104,4 +104,4 @@ The remaining non-code launch decisions are:
 
 ## Interfaces and Dependencies
 
-The launch depends on Cloudflare Pages, Next.js, Resend, static local images under `public/`, and the editable TypeScript data modules under `lib/`. Do not introduce a second source of truth for band content unless the project intentionally adds a CMS or live Bandsintown integration.
+The launch depends on Cloudflare Pages, Next.js, Mailchimp Transactional or another transactional sender, static local images under `public/`, and the editable TypeScript data modules under `lib/`. Do not introduce a second source of truth for band content unless the project intentionally adds a CMS or live Bandsintown integration.

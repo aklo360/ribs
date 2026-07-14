@@ -106,7 +106,7 @@ export const bookingSchema = z.object({
   eventDate: z.string().optional(),
   dateFlexible: z.boolean().default(false),
   city: z.string().min(2, "Where is the event?"),
-  region: z.string().optional(),
+  region: z.string().min(2, "What state or region is the event in?"),
   venueName: z.string().optional(),
   setting: z.enum(["Indoor", "Outdoor", "Both / Unsure"]).optional(),
   audienceSize: z.string().optional(),

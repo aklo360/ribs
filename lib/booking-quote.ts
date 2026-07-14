@@ -41,6 +41,8 @@ const LINEUPS: Lineup[] = ["Duo", "4-Piece", "5-Piece", "7-Piece"];
 const RECOMMEND_LINEUP = "Not sure — recommend one";
 const TWO_HOUR_SET_LENGTH = "≤ 2 hours";
 const FOUR_HOUR_SET_LENGTH = "4 hours";
+const THREE_HOUR_MULTIPLIER = { min: 1.5, max: 1.25 } as const;
+const FOUR_HOUR_MULTIPLIER = { min: 2, max: 5 / 3 } as const;
 
 const isLineup = (value: BookingInput["lineup"]): value is Lineup =>
   value === "Duo" || value === "4-Piece" || value === "5-Piece" || value === "7-Piece";
@@ -81,14 +83,13 @@ function currency(value: number) {
   return `$${value.toLocaleString("en-US")}`;
 }
 
-function customLengthRange(range: BaseRange, hours: number): BaseRange {
-  const spread = range.max - range.min;
-  const extraHours = Math.max(hours - 4, 0);
-  const fourHourMin = range.min + spread * 0.65;
-
+function scaledLengthRange(
+  range: BaseRange,
+  multiplier: typeof THREE_HOUR_MULTIPLIER | typeof FOUR_HOUR_MULTIPLIER
+): BaseRange {
   return {
-    min: fourHourMin + range.max * extraHours * 0.08,
-    max: range.max + range.max * extraHours * 0.14,
+    min: range.min * multiplier.min,
+    max: range.max * multiplier.max,
   };
 }
 
@@ -108,14 +109,11 @@ function performanceRange(
   }
 
   if (setLength === "3 hours") {
-    return {
-      min: range.min + (range.max - range.min) * 0.35,
-      max: range.max,
-    };
+    return scaledLengthRange(range, THREE_HOUR_MULTIPLIER);
   }
 
   if (setLength === FOUR_HOUR_SET_LENGTH || customHours === 4) {
-    return customLengthRange(range, 4);
+    return scaledLengthRange(range, FOUR_HOUR_MULTIPLIER);
   }
 
   return range;
@@ -149,11 +147,6 @@ function adjustedLineupRange(
   if (input.formalDress) {
     min *= 1.06;
     max *= 1.1;
-  }
-
-  if (bucket === "fundraiser") {
-    min *= 0.9;
-    max *= 0.9;
   }
 
   return { min, max };

@@ -10,12 +10,42 @@ import { SITE } from "@/lib/content";
 // Edge-safe: uses only fetch + Web APIs, so it runs in dev and on Cloudflare Pages.
 export const runtime = "edge";
 
+type BookingEmailProvider = "mailchimp-transactional" | "resend" | "unconfigured";
+
+type MailchimpTransactionalSendResult = {
+  email?: string;
+  status?: string;
+  reject_reason?: string | null;
+  _id?: string;
+};
+
+function getMailchimpTransactionalKey(): string {
+  return (
+    process.env.MAILCHIMP_TRANSACTIONAL_API_KEY?.trim() ||
+    process.env.MANDRILL_API_KEY?.trim() ||
+    ""
+  );
+}
+
+function getBookingEmailProvider(): BookingEmailProvider {
+  if (getMailchimpTransactionalKey()) return "mailchimp-transactional";
+  if (process.env.RESEND_API_KEY?.trim()) return "resend";
+  return "unconfigured";
+}
+
 export async function GET() {
+  const transactionalConfigured = Boolean(getMailchimpTransactionalKey());
+  const resendConfigured = Boolean(process.env.RESEND_API_KEY?.trim());
+  const fromConfigured = Boolean(process.env.BOOKING_FROM_EMAIL?.trim());
+
   return NextResponse.json({
     ok: true,
     bookingEmail: SITE.bookingEmail,
-    emailConfigured: Boolean(process.env.RESEND_API_KEY),
-    fromConfigured: Boolean(process.env.BOOKING_FROM_EMAIL),
+    emailConfigured: (transactionalConfigured && fromConfigured) || resendConfigured,
+    emailProvider: getBookingEmailProvider(),
+    transactionalConfigured,
+    resendConfigured,
+    fromConfigured,
   });
 }
 
@@ -42,6 +72,73 @@ function escapeHtml(s: string): string {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
+}
+
+async function sendMailchimpTransactionalEmail({
+  key,
+  from,
+  to,
+  replyTo,
+  subject,
+  html,
+}: {
+  key: string;
+  from: string;
+  to: string;
+  replyTo: string;
+  subject: string;
+  html: string;
+}): Promise<{ ok: true } | { ok: false; status: number; detail: string }> {
+  const response = await fetch(
+    "https://mandrillapp.com/api/1.0/messages/send.json",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        key,
+        message: {
+          html,
+          subject,
+          from_email: from,
+          from_name: "Roots in Blue Stone",
+          to: [{ email: to, type: "to" }],
+          headers: { "Reply-To": replyTo },
+          auto_text: true,
+          track_opens: true,
+          track_clicks: true,
+          tags: ["booking-inquiry"],
+        },
+        async: false,
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    const detail = await response.text().catch(() => "");
+    return { ok: false, status: response.status, detail };
+  }
+
+  const result = await response
+    .json()
+    .catch((): MailchimpTransactionalSendResult[] => []);
+  const results = Array.isArray(result)
+    ? (result as MailchimpTransactionalSendResult[])
+    : [];
+  const failed = results.find((entry) =>
+    ["invalid", "rejected"].includes(String(entry.status ?? "").toLowerCase())
+  );
+
+  if (failed) {
+    return {
+      ok: false,
+      status: 200,
+      detail: `Mailchimp status: ${failed.status ?? "unknown"}${
+        failed.reject_reason ? ` (${failed.reject_reason})` : ""
+      }`,
+    };
+  }
+
+  return { ok: true };
 }
 
 export async function POST(request: Request) {
@@ -111,15 +208,20 @@ export async function POST(request: Request) {
     </div>
   </div>`;
 
-  const apiKey = process.env.RESEND_API_KEY;
+  const provider = getBookingEmailProvider();
+  const mailchimpTransactionalKey = getMailchimpTransactionalKey();
+  const resendApiKey = process.env.RESEND_API_KEY?.trim();
   const to = SITE.bookingEmail;
-  const from = process.env.BOOKING_FROM_EMAIL ?? "onboarding@resend.dev";
+  const configuredFrom = process.env.BOOKING_FROM_EMAIL?.trim();
+  const subject = `Booking: ${b.eventType ?? "Inquiry"} - ${b.name}${
+    b.eventDate ? ` (${b.eventDate})` : ""
+  }`;
 
   // Do not show a fake success on production if email delivery is not wired.
-  if (!apiKey) {
+  if (provider === "unconfigured") {
     console.warn("[booking] Email delivery is not configured:", {
-      name: b.name,
-      email: b.email,
+      hasName: Boolean(b.name),
+      hasEmail: Boolean(b.email),
       eventType: b.eventType,
       date: b.eventDate,
       lineup: b.lineup,
@@ -134,19 +236,52 @@ export async function POST(request: Request) {
     );
   }
 
+  if (provider === "mailchimp-transactional") {
+    if (!configuredFrom) {
+      console.warn("[booking] Mailchimp Transactional sender is not configured");
+      return NextResponse.json(
+        {
+          error: `Booking email sender is not connected yet. Please email ${SITE.bookingEmail} directly.`,
+        },
+        { status: 503 }
+      );
+    }
+
+    const result = await sendMailchimpTransactionalEmail({
+      key: mailchimpTransactionalKey,
+      from: configuredFrom,
+      to,
+      replyTo: b.email,
+      subject,
+      html,
+    });
+
+    if (!result.ok) {
+      console.error("[booking] Mailchimp Transactional error:", {
+        status: result.status,
+        detail: result.detail,
+      });
+      return NextResponse.json({ error: "Email failed to send" }, { status: 502 });
+    }
+
+    return NextResponse.json({
+      ok: true,
+      delivered: true,
+      provider: "mailchimp-transactional",
+    });
+  }
+
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${apiKey}`,
+      Authorization: `Bearer ${resendApiKey}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: `Roots in Blue Stone <${from}>`,
+      from: `Roots in Blue Stone <${configuredFrom || "onboarding@resend.dev"}>`,
       to: [to],
       reply_to: b.email,
-      subject: `Booking: ${b.eventType ?? "Inquiry"} — ${b.name}${
-        b.eventDate ? ` (${b.eventDate})` : ""
-      }`,
+      subject,
       html,
     }),
   });
@@ -157,5 +292,5 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Email failed to send" }, { status: 502 });
   }
 
-  return NextResponse.json({ ok: true, delivered: true });
+  return NextResponse.json({ ok: true, delivered: true, provider: "resend" });
 }

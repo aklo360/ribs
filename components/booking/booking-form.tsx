@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import {
   useForm,
   Controller,
@@ -213,6 +213,15 @@ export function BookingForm() {
     if (ok) setStep((s) => Math.min(s + 1, total - 1));
   }
 
+  async function handleFormSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!isLast) {
+      await next();
+      return;
+    }
+    await handleSubmit(onSubmit)(event);
+  }
+
   async function onSubmit(values: BookingInput) {
     setSubmitting(true);
     try {
@@ -287,7 +296,7 @@ export function BookingForm() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} noValidate>
+      <form onSubmit={handleFormSubmit} noValidate>
         {/* Honeypot */}
         <input
           type="text"

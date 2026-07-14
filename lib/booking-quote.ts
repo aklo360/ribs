@@ -134,16 +134,6 @@ function adjustedLineupRange(
     max *= lift;
   }
 
-  if (
-    input.soundProvided === "Band provides sound" ||
-    input.soundProvided === "Band provides PA / sound"
-  ) {
-    min *= 1.12;
-    max *= 1.2;
-  } else if (input.soundProvided === "Mix of Both" || input.soundProvided === "Unsure") {
-    max *= 1.2;
-  }
-
   return { min, max };
 }
 

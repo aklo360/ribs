@@ -8,7 +8,7 @@
 - Updated the booking form client to display the API's real error message and direct users to `rootsinbluestone@gmail.com` if booking email delivery is not connected.
 - Added Mailchimp Transactional support for booking emails through `MAILCHIMP_TRANSACTIONAL_API_KEY` or `MANDRILL_API_KEY`, with `RESEND_API_KEY` preserved as a fallback. The current Mailchimp Marketing key used for newsletter signups is not a Transactional/Mandrill key.
 - Required both City and State / Region on the booking event step.
-- Added a yellow one-line warning under the Event Date field, on the same Event step, when the selected date matches a checked-in tour date: `*POTENTIAL CONFLICT, BAND IS BOOKED ON THIS DATE BUT WILL ACCOMMODATE IF POSSIBLE.`
+- Moved the yellow booked-date warning out of the Event Date field and into a full-width alert directly beneath the step progress bar on the Event step: `*POTENTIAL CONFLICT, BAND IS BOOKED ON THIS DATE BUT WILL ACCOMMODATE IF POSSIBLE.`
 - Hid the live quote estimate until the client reaches the Performance step and selects a lineup size, so the form no longer opens with a misleading default public Duo estimate. The booked-date warning remains separate from the quote panel so clients see it immediately after choosing a conflicting date.
 - Documented that booking date-conflict checks must use `lib/tour.ts` as the same source of truth as the website tour list, so future Bandsintown listener updates automatically feed the booking form without a second direct Bandsintown lookup.
 - Removed the booking quote note `Travel may adjust the final quote.` from the shared quote calculator.
@@ -24,6 +24,7 @@
 - Collapsed the booking flow from 5 displayed steps to 4 by moving final notes onto the final sound/details screen, so the progress bar is full on `Step 4 of 4` before submitting.
 - Added a defensive form-submit guard so Enter-key or browser submit behavior before Step 4 only advances the form and never posts to `/api/book`.
 - Removed the visible Budget Range, Travel & Lodging, Formal / Upscale Dress Requirement, and How Did You Hear About Us fields from the booking form. The booking schema, quote calculator, and booking email output no longer use those fields.
+- Expanded repository secret-file protection to ignore `.dev.vars` and `*.key` alongside the existing `.env*` and `*.pem` patterns.
 - Verification: Cloudflare Pages secret-name audit, local no-sender POST returned HTTP 503 with the direct-email message, direct quote/schema probes confirmed duration-based max increases, no fundraiser discount, `4 hours` pricing, sound selection does not affect quote ranges, required State / Region, and rejection of `customHours: 5`, `npm run lint`, and `npm run build` passed.
 - Remaining setup: enable Mailchimp Transactional/Mandrill, add `MAILCHIMP_TRANSACTIONAL_API_KEY` or `MANDRILL_API_KEY`, and configure verified `BOOKING_FROM_EMAIL`. Mailchimp Marketing is still only for newsletter audience signups, not contact-form delivery.
 

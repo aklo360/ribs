@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import {
   ArrowLeft,
   ArrowRight,
+  AlertTriangle,
   Check,
   Info,
   Loader2,
@@ -193,6 +194,7 @@ export function BookingForm() {
   const total = STEPS.length;
   const isLast = step === total - 1;
   const showQuoteEstimate = step >= 2 && Boolean(quoteValues.lineup);
+  const dateConflict = step === 1 && dateHasBookedShow(quoteValues.eventDate);
 
   useEffect(() => {
     if (
@@ -294,6 +296,22 @@ export function BookingForm() {
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           />
         </div>
+        <AnimatePresence initial={false}>
+          {dateConflict && (
+            <motion.div
+              role="status"
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              className="mt-4 flex w-full items-start gap-3 rounded-md border border-yellow-300/25 bg-yellow-300/[0.08] px-4 py-3 text-yellow-200"
+            >
+              <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+              <p className="text-xs font-semibold uppercase tracking-normal sm:text-sm">
+                *POTENTIAL CONFLICT, BAND IS BOOKED ON THIS DATE BUT WILL ACCOMMODATE IF POSSIBLE.
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <form onSubmit={handleFormSubmit} noValidate>
@@ -452,9 +470,7 @@ function Step1({ register, control, errors }: StepProps) {
 
 function Step2({ register, control, errors }: StepProps) {
   const setting = useWatch({ control, name: "setting" });
-  const eventDate = useWatch({ control, name: "eventDate" });
   const isOutdoor = setting === "Outdoor" || setting === "Both / Unsure";
-  const dateConflict = dateHasBookedShow(eventDate);
 
   return (
     <>
@@ -470,11 +486,6 @@ function Step2({ register, control, errors }: StepProps) {
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Event date">
           <Input type="date" {...register("eventDate")} />
-          {dateConflict && (
-            <p className="text-xs font-semibold uppercase tracking-normal text-yellow-300">
-              *POTENTIAL CONFLICT, BAND IS BOOKED ON THIS DATE BUT WILL ACCOMMODATE IF POSSIBLE.
-            </p>
-          )}
         </Field>
         <Controller
           control={control}

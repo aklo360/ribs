@@ -1,24 +1,27 @@
 # Changelog — Roots in Blue Stone (RIBS)
 
-## 2026-07-14 — Booking email delivery guard
+## 2026-07-14 — Booking email delivery guard and quote corrections
 
 - Confirmed the production Cloudflare Pages project only has the Mailchimp newsletter secrets configured; `RESEND_API_KEY` is missing, so booking submissions could be accepted by the form without actual email delivery.
 - Updated `app/api/book/route.ts` so missing booking-email configuration returns HTTP 503 with the direct booking email instead of a fake success.
 - Added a lightweight `GET /api/book` health response that reports whether booking email delivery is configured, without exposing any secret values.
 - Updated the booking form client to display the API's real error message and direct users to `rootsinbluestone@gmail.com` if booking email delivery is not connected.
+- Added Mailchimp Transactional support for booking emails through `MAILCHIMP_TRANSACTIONAL_API_KEY` or `MANDRILL_API_KEY`, with `RESEND_API_KEY` preserved as a fallback. The current Mailchimp Marketing key used for newsletter signups is not a Transactional/Mandrill key.
+- Required both City and State / Region on the booking event step.
+- Added a yellow one-line warning under Event date when the selected date matches a checked-in tour date: `*POTENTIAL CONFLICT, BAND IS BOOKED ON THIS DATE BUT WILL ACCOMMODATE IF POSSIBLE.`
 - Removed the booking quote note `Travel may adjust the final quote.` from the shared quote calculator.
 - Consolidated booking event-type buttons to `Public Event`, `Private / Corporate Event`, `Wedding`, `Fundraiser`, and `Other`, while keeping server-side compatibility for old event labels from stale browser tabs.
-- Applied a 10% discount to the displayed quote estimate when `Fundraiser` is selected, including the legacy `Festival / Fundraiser` value.
+- Kept Fundraiser pricing on the normal fundraiser base range with no extra discount.
 - Updated `Not sure — recommend one` lineup estimates to show the full scenario range from Duo through 7-Piece instead of falling back to Duo pricing.
 - Changed the two-hour set-length option label to `≤ 2 hours`, kept legacy `2 hours` submissions valid, and made repertoire informational for pricing. `Original Music` now only caps the effective set length at `≤ 2 hours`.
 - Replaced the freeform custom-hours input with a fixed `4 hours` option, making 4 hours the maximum selectable set length. Legacy `customHours` submissions now validate only when the value is exactly 4.
-- Restored the quote maximum behavior after the public-event minimum reduction: set-length choices preserve the configured maximums, so Public Event Duo at `≤ 2 hours` now shows `$500-$1,200` instead of compressing to `$500-$900`.
+- Updated duration pricing so longer set lengths can raise both the lower and upper estimate. Public Event Duo now shows `$500-$1,200` at `≤ 2 hours`, `$750-$1,500` at `3 hours`, and `$1,000-$2,000` at `4 hours`; the same multipliers apply across the other lineup/event buckets.
 - Simplified the booking form sound question to `Will the band be providing sound?`, renamed the visible band-supplied option to `Band provides sound`, replaced the visible `Unsure` sound option with `Mix of Both`, and made that mixed option widen the quote estimate by keeping the no-PA lower bound while using the band-provided-sound upper bound. Legacy `Band provides PA / sound` and `Unsure` submissions remain valid for stale browser tabs.
 - Hid the `Backline / gear available on site` selector unless the sound answer is `Venue provides sound` or `Mix of Both`, added `Partial PA / Sound System` next to `Full PA / Sound System`, and cleared hidden gear selections when clients switch to `Band provides sound`.
 - Renamed the final booking form action button to `SUBMIT`.
 - Collapsed the booking flow from 5 displayed steps to 4 by moving budget/details onto the final sound/details screen, so the progress bar is full on `Step 4 of 4` before submitting.
-- Verification: Cloudflare Pages secret-name audit, local no-Resend POST returned HTTP 503 with the direct-email message, direct quote/schema probes confirmed preserved maximums, `4 hours` pricing, widened mixed-sound ranges, and rejection of `customHours: 5`, `npm run lint`, and `npm run build` passed.
-- Remaining setup: add a transactional email sender secret, preferably `RESEND_API_KEY`, and configure `BOOKING_FROM_EMAIL` once a verified sender/domain is available. Mailchimp Marketing is still only for newsletter audience signups, not contact-form delivery.
+- Verification: Cloudflare Pages secret-name audit, local no-sender POST returned HTTP 503 with the direct-email message, direct quote/schema probes confirmed duration-based max increases, no fundraiser discount, `4 hours` pricing, widened mixed-sound ranges, required State / Region, and rejection of `customHours: 5`, `npm run lint`, and `npm run build` passed.
+- Remaining setup: enable Mailchimp Transactional/Mandrill, add `MAILCHIMP_TRANSACTIONAL_API_KEY` or `MANDRILL_API_KEY`, and configure verified `BOOKING_FROM_EMAIL`. Mailchimp Marketing is still only for newsletter audience signups, not contact-form delivery.
 
 ## 2026-07-13 — Tip jar paused before launch
 

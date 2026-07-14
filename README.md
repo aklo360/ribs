@@ -10,7 +10,7 @@ of rootsinbluestone.com with an app-like, Spotify/dusk.fm-style feel.
 - shadcn/ui (Base UI primitives, `base-nova` preset)
 - react-hook-form + zod (booking form)
 - motion (framer-motion) for animation
-- Resend for booking-email delivery
+- Mailchimp Transactional or Resend for booking-email delivery
 - Mailchimp Marketing API for newsletter signup
 - Deploy target: Cloudflare Pages
 
@@ -59,8 +59,12 @@ node scripts/tour-sync.mjs --source-file scripts/fixtures/bandsintown-events.sam
 ## Booking form
 
 `POST /api/book` validates with the shared zod schema and emails
-`rootsinbluestone@gmail.com` via Resend. Without `RESEND_API_KEY` it gracefully
-logs and returns success, so local/dev and previews work unconfigured.
+`rootsinbluestone@gmail.com`. It prefers Mailchimp Transactional when
+`MAILCHIMP_TRANSACTIONAL_API_KEY` or `MANDRILL_API_KEY` is configured, and falls
+back to Resend when `RESEND_API_KEY` is configured. Mailchimp Transactional also
+requires `BOOKING_FROM_EMAIL` to be a verified sender/domain. Without a
+transactional sender, the route returns a visible 503 fallback message instead
+of pretending the inquiry was delivered.
 
 ## Newsletter
 
@@ -96,6 +100,7 @@ point `lib/content.ts` at them.
 npm run cf:deploy    # confirm target/domain first
 ```
 
-Set `RESEND_API_KEY`, `BOOKING_FROM_EMAIL`, `MAILCHIMP_API_KEY`, and
-`MAILCHIMP_AUDIENCE_ID` as Pages secrets.
+Set `BOOKING_FROM_EMAIL`, `MAILCHIMP_TRANSACTIONAL_API_KEY` or
+`MANDRILL_API_KEY`, `MAILCHIMP_API_KEY`, and `MAILCHIMP_AUDIENCE_ID` as Pages
+secrets. `RESEND_API_KEY` is still supported as a booking-email fallback.
 DNS cutover from the current Wix site is a separate, approval-gated step.

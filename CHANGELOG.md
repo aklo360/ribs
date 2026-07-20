@@ -1,5 +1,15 @@
 # Changelog — Roots in Blue Stone (RIBS)
 
+## 2026-07-20 — Production domain and Resend launch wiring
+
+- Made `https://rootsinbluestone.com` the canonical production URL for site metadata and social cards.
+- Added permanent host redirects from `www.rootsinbluestone.com`, `ribs.music`, and `www.ribs.music` to the apex domain while preserving paths and query strings.
+- Made Resend the preferred booking-email provider and required both `RESEND_API_KEY` and a verified `BOOKING_FROM_EMAIL` before the API reports delivery as configured. Mailchimp Transactional remains an optional fallback.
+- Configured the production Pages sender as `sup@rootsinbluestone.com`; the booking destination remains `rootsinbluestone@gmail.com`, with the client's email used as `Reply-To`.
+- Confirmed Cloudflare DNS contains Mailchimp DKIM, Resend DKIM/SPF, DMARC, and Email Routing MX/SPF records without exposing credential values.
+- Confirmed newsletter API signups default to `pending` for Mailchimp double opt-in.
+- Verified the Next.js host redirects locally, including path/query preservation; `npm run lint`, `npm run build`, and `npm run cf:build` passed.
+
 ## 2026-07-14 — Booking email delivery guard and quote corrections
 
 - Confirmed the production Cloudflare Pages project only has the Mailchimp newsletter secrets configured; `RESEND_API_KEY` is missing, so booking submissions could be accepted by the form without actual email delivery.
@@ -8,7 +18,7 @@
 - Updated the booking form client to display the API's real error message and direct users to `rootsinbluestone@gmail.com` if booking email delivery is not connected.
 - Added Mailchimp Transactional support for booking emails through `MAILCHIMP_TRANSACTIONAL_API_KEY` or `MANDRILL_API_KEY`, with `RESEND_API_KEY` preserved as a fallback. The current Mailchimp Marketing key used for newsletter signups is not a Transactional/Mandrill key.
 - Required both City and State / Region on the booking event step.
-- Moved the yellow booked-date warning out of the Event Date field and into a full-width alert directly beneath the step progress bar on the Event step: `*POTENTIAL CONFLICT, BAND IS BOOKED ON THIS DATE BUT WILL ACCOMMODATE IF POSSIBLE.`
+- Moved the yellow booked-date warning out of the Event Date field and into a full-width alert directly beneath the step progress bar on the Event step, using normal sentence case: `*Potential conflict, band is booked on this date but will accommodate if possible.`
 - Hid the live quote estimate until the client reaches the Performance step and selects a lineup size, so the form no longer opens with a misleading default public Duo estimate. The booked-date warning remains separate from the quote panel so clients see it immediately after choosing a conflicting date.
 - Documented that booking date-conflict checks must use `lib/tour.ts` as the same source of truth as the website tour list, so future Bandsintown listener updates automatically feed the booking form without a second direct Bandsintown lookup.
 - Removed the booking quote note `Travel may adjust the final quote.` from the shared quote calculator.
@@ -22,11 +32,11 @@
 - Hid the `Backline / gear available on site` selector unless the sound answer is `Venue provides sound` or `Mix of Both`, added `Partial PA / Sound System` next to `Full PA / Sound System`, and cleared hidden gear selections when clients switch to `Band provides sound`.
 - Renamed the final booking form action button to `SUBMIT`.
 - Collapsed the booking flow from 5 displayed steps to 4 by moving final notes onto the final sound/details screen, so the progress bar is full on `Step 4 of 4` before submitting.
-- Added a defensive form-submit guard so Enter-key or browser submit behavior before Step 4 only advances the form and never posts to `/api/book`.
+- Replaced the swapping Step 3 `Continue` / Step 4 submit controls with one stable `type="button"` primary action. Native form-submit events can only advance earlier steps, and `/api/book` is called exclusively by an explicit click while already on Step 4, preventing the Step 3-to-4 transition from triggering the unconfigured-email error.
 - Removed the visible Budget Range, Travel & Lodging, Formal / Upscale Dress Requirement, and How Did You Hear About Us fields from the booking form. The booking schema, quote calculator, and booking email output no longer use those fields.
 - Expanded repository secret-file protection to ignore `.dev.vars` and `*.key` alongside the existing `.env*` and `*.pem` patterns.
 - Verification: Cloudflare Pages secret-name audit, local no-sender POST returned HTTP 503 with the direct-email message, direct quote/schema probes confirmed duration-based max increases, no fundraiser discount, `4 hours` pricing, sound selection does not affect quote ranges, required State / Region, and rejection of `customHours: 5`, `npm run lint`, and `npm run build` passed.
-- Remaining setup: enable Mailchimp Transactional/Mandrill, add `MAILCHIMP_TRANSACTIONAL_API_KEY` or `MANDRILL_API_KEY`, and configure verified `BOOKING_FROM_EMAIL`. Mailchimp Marketing is still only for newsletter audience signups, not contact-form delivery.
+- Superseded on 2026-07-20: Resend and the verified booking sender are now configured; Mailchimp Marketing remains dedicated to newsletter audience signups.
 
 ## 2026-07-13 — Tip jar paused before launch
 

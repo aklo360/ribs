@@ -11,8 +11,7 @@ export const SITE = {
   // Verbatim opening line of their bio.
   description:
     "Roots in Blue Stone is a Pennsylvania-born band blending reggae, rock, blues, and soul into a sound that feels both familiar and fresh.",
-  // Update to the production domain once confirmed.
-  url: "https://www.rootsinbluestone.com",
+  url: "https://rootsinbluestone.com",
   bookingEmail: "rootsinbluestone@gmail.com",
   genres: ["Reggae", "Rock", "Blues", "Soul"],
   homeBase: "Pennsylvania · The Poconos",

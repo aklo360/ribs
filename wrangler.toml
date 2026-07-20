@@ -6,8 +6,8 @@ pages_build_output_dir = ".vercel/output/static"
 # Cloudflare Pages target for the Roots in Blue Stone site.
 # Deploy is NOT run automatically — confirm target/domain first.
 # Set these as Pages secrets (dashboard or `wrangler pages secret put`):
-#   MAILCHIMP_TRANSACTIONAL_API_KEY or MANDRILL_API_KEY, BOOKING_FROM_EMAIL
-#   RESEND_API_KEY (optional booking-email fallback)
+#   RESEND_API_KEY, BOOKING_FROM_EMAIL
+#   MAILCHIMP_TRANSACTIONAL_API_KEY or MANDRILL_API_KEY (optional fallback)
 #   MAILCHIMP_API_KEY, MAILCHIMP_AUDIENCE_ID
 # Optional newsletter variables:
 #   MAILCHIMP_SERVER_PREFIX, MAILCHIMP_SUBSCRIBE_STATUS, MAILCHIMP_TAGS

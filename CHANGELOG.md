@@ -1,5 +1,20 @@
 # Changelog — Roots in Blue Stone (RIBS)
 
+## 2026-07-20 — Public contact address and footer credit
+
+- Changed `SITE.bookingEmail` to `sup@rootsinbluestone.com`, updating every public contact link, booking fallback message, and the booking API destination through the existing shared content source.
+- Changed the footer credit from `Designed by NewSphere` to `Built by NewSphere`.
+
+## 2026-07-20 — Printful Quick Store merch checkout
+
+- Added an `Official Merch` homepage section and nav link with the current reviewed three-product collection: RIBS Hoodie, RIBS T-Shirt, and Golf Rope Cap.
+- Positioned merch directly after the booking form and before the newsletter, using only the restrained `Official Merch` section label with no promotional headline.
+- Removed the Printful fulfillment footer line so the section ends directly after the product cards.
+- Connected all three cards to their direct product pages on the public `https://ribs.printful.me/` Quick Store, where Printful owns cart, payment, tax, shipping, and fulfillment.
+- Updated public prices to Hoodie `$43.50`, T-Shirt `$23.00`, and Golf rope cap `$17.50`; only the T-shirt card changed imagery, using the final replacement product mockup while the reviewed hoodie and cap images remain unchanged.
+- Removed the abandoned server-side Printful price-refresh route and related environment configuration. The reviewed Quick Store catalog in `lib/merch.ts` is now the website source for product names, prices, local images, and checkout URLs.
+- Verification: the public Quick Store and all three direct product URLs returned the expected catalog data; `git diff --check`, `npm run lint`, and `npm run build` passed.
+
 ## 2026-07-20 — Production domain and Resend launch wiring
 
 - Made `https://rootsinbluestone.com` the canonical production URL for site metadata and social cards.

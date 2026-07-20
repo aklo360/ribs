@@ -59,7 +59,7 @@ node scripts/tour-sync.mjs --source-file scripts/fixtures/bandsintown-events.sam
 ## Booking form
 
 `POST /api/book` validates with the shared zod schema and emails
-`rootsinbluestone@gmail.com`. It prefers Mailchimp Transactional when
+`sup@rootsinbluestone.com`. It prefers Mailchimp Transactional when
 `MAILCHIMP_TRANSACTIONAL_API_KEY` or `MANDRILL_API_KEY` is configured, and falls
 back to Resend when `RESEND_API_KEY` is configured. Mailchimp Transactional also
 requires `BOOKING_FROM_EMAIL` to be a verified sender/domain. Without a

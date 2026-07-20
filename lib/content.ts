@@ -12,7 +12,7 @@ export const SITE = {
   description:
     "Roots in Blue Stone is a Pennsylvania-born band blending reggae, rock, blues, and soul into a sound that feels both familiar and fresh.",
   url: "https://rootsinbluestone.com",
-  bookingEmail: "rootsinbluestone@gmail.com",
+  bookingEmail: "sup@rootsinbluestone.com",
   genres: ["Reggae", "Rock", "Blues", "Soul"],
   homeBase: "Pennsylvania · The Poconos",
   logo: "/img/logo.png",
@@ -458,6 +458,7 @@ export const HERO_IMAGE = "/img/hero-banner.jpg";
 export const NAV_LINKS = [
   { label: "Tour", href: "#tour" },
   { label: "Music", href: "#music" },
+  { label: "Merch", href: "#merch" },
   { label: "About", href: "#about" },
   { label: "Gallery", href: "#gallery" },
   { label: "Video", href: "#video" },

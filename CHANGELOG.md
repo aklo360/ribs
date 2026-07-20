@@ -1,5 +1,11 @@
 # Changelog — Roots in Blue Stone (RIBS)
 
+## 2026-07-20 — Project closeout (maintenance mode)
+
+- AKLO declared RIBS officially done for now. The production site is live at `https://rootsinbluestone.com` with booking, Resend email delivery, Mailchimp newsletter, Printful merch, and the Bandsintown tour-sync automation.
+- No scheduled work remains; the project enters maintenance mode. The tour-sync GitHub workflow continues to open PRs when Bandsintown dates change.
+- Backlog (tracked in the vault project note): the circular rib-meat `RIBS` logo concept for Walter.
+
 ## 2026-07-20 — Public contact address and footer credit
 
 - Changed `SITE.bookingEmail` to `sup@rootsinbluestone.com`, updating every public contact link, booking fallback message, and the booking API destination through the existing shared content source.

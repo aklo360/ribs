@@ -4,6 +4,8 @@
 
 - Changed `SITE.bookingEmail` to `sup@rootsinbluestone.com`, updating every public contact link, booking fallback message, and the booking API destination through the existing shared content source.
 - Changed the footer credit from `Designed by NewSphere` to `Built by NewSphere`.
+- Centered both booking-section columns vertically within their shared desktop grid row so the contact copy and booking form align to the same parent centerline.
+- Removed the extra booking-section venue/lineup sentence beneath the quote.
 
 ## 2026-07-20 — Printful Quick Store merch checkout
 

@@ -7,18 +7,13 @@ import { SITE, BIO } from "@/lib/content";
 export function BookingSection() {
   return (
     <Section id="book" eyebrow="Bookings" title="Book the Band">
-      <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
-        <Reveal className="min-w-0">
-          <div className="flex min-w-0 flex-col gap-7">
+      <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-stretch">
+        <Reveal className="min-w-0 lg:flex lg:h-full lg:items-center">
+          <div className="flex w-full min-w-0 flex-col gap-7">
             {/* Verbatim line from the band's bio */}
             <blockquote className="border-l-2 border-white/20 pl-5 font-display text-xl font-semibold leading-snug tracking-tight text-foreground/90 sm:text-2xl">
               “{BIO[2]}”
             </blockquote>
-
-            <p className="text-foreground/65">
-              Wineries, festivals, weddings, private events — duo to full band.
-              Send the details below.
-            </p>
 
             <div className="flex flex-wrap items-center gap-3">
               <a
@@ -44,8 +39,10 @@ export function BookingSection() {
           </div>
         </Reveal>
 
-        <Reveal delay={0.1} className="min-w-0">
-          <BookingForm />
+        <Reveal delay={0.1} className="min-w-0 lg:flex lg:h-full lg:items-center">
+          <div className="w-full">
+            <BookingForm />
+          </div>
         </Reveal>
       </div>
     </Section>

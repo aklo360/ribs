@@ -32,7 +32,7 @@ export function SiteNav() {
       )}
     >
       <nav className="relative mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 sm:px-8">
-        <div className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-7 md:flex">
+        <div className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-7 lg:flex">
           {NAV_LINKS.filter((l) => l.href !== "#tour").map((l) => (
             <a
               key={l.href}
@@ -63,7 +63,7 @@ export function SiteNav() {
           <Sheet>
             <SheetTrigger
               aria-label="Open menu"
-              className="glass flex size-10 items-center justify-center rounded-full text-foreground/80 md:hidden"
+              className="glass flex size-10 items-center justify-center rounded-full text-foreground/80 lg:hidden"
             >
               <Menu className="size-5" />
             </SheetTrigger>

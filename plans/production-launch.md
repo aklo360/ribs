@@ -19,7 +19,10 @@ Roots in Blue Stone needs a production-ready website launch that Walter can trus
 - [x] (2026-07-08) Run local `npm run lint` and `npm run build` after the Walter launch notes pass.
 - [ ] Decide whether public minimums should apply only to Bar / Restaurant or also Winery / Brewery and Other public bookings.
 - [ ] Decide the wedding quote path: full form, lighter inquiry path, downloadable package PDF, or a combination.
-- [ ] Decide Printful launch scope: merch link only, embedded store, or full Printful-backed shop integration.
+- [x] (2026-07-20) Add the reviewed three-product merch catalog with local mockups and direct product links.
+- [x] (2026-07-20) Create and verify the public `ribs.printful.me` Quick Store with hosted customer checkout.
+- [x] (2026-07-20) Match website prices to the live catalog and update only the replacement T-shirt mockup and URL.
+- [ ] Remove the old Wix-connected Printful store only after Walter confirms it is no longer needed for historical orders or product templates.
 - [ ] Enable Mailchimp Transactional/Mandrill, configure production booking email secrets in Cloudflare Pages without printing secret values, and verify `BOOKING_FROM_EMAIL`.
 - [ ] Send test booking submissions from staging and confirm Walter sees the exact email format he wants.
 - [ ] Run final lint, build, and browser checks on staging.
@@ -53,7 +56,7 @@ The July 8 pass corrected visible launch blockers in code and captured the remai
 
 ## Context and Orientation
 
-The RIBS site is a Next.js 16 and React 19 app deployed on Cloudflare Pages. Most editable band content lives in `lib/content.ts`. Tour dates live in `lib/tour.ts`. Booking form questions live in `lib/booking-schema.ts` and `components/booking/booking-form.tsx`. Quote estimate math lives in `lib/booking-quote.ts`. Booking emails are sent by `app/api/book/route.ts` to `rootsinbluestone@gmail.com` through Mailchimp Transactional when `MAILCHIMP_TRANSACTIONAL_API_KEY` or `MANDRILL_API_KEY` plus verified `BOOKING_FROM_EMAIL` are configured; Resend remains a fallback when `RESEND_API_KEY` is configured.
+The RIBS site is a Next.js 16 and React 19 app deployed on Cloudflare Pages. Most editable band content lives in `lib/content.ts`. Tour dates live in `lib/tour.ts`. Booking form questions live in `lib/booking-schema.ts` and `components/booking/booking-form.tsx`. Quote estimate math lives in `lib/booking-quote.ts`. Booking emails are sent by `app/api/book/route.ts` to `sup@rootsinbluestone.com` through Resend when `RESEND_API_KEY` plus verified `BOOKING_FROM_EMAIL` are configured; Mailchimp Transactional remains an optional fallback.
 
 The production deploy target is Cloudflare Pages project `roots-in-blue-stone`. Staging is currently the safe review target. Production deploy and DNS cutover are approval-gated.
 
@@ -99,7 +102,7 @@ Most content edits are safe to repeat because they are static files under Git. B
 The remaining non-code launch decisions are:
 
 - Wedding packages: likely a downloadable document plus a lighter inquiry path so wedding clients are not deterred before they know every detail.
-- Printful: needs product list, artwork, variants, prices, shipping/tax expectations, and whether launch uses links or a full shop integration.
+- Printful: the reviewed public catalog and mockups are now on-site. The remaining migration is replacement manual/API store creation, product-template publishing, a `sync_products/read` token, customer checkout/payment, and final removal of the old Wix-connected store.
 - Bandsintown: current site uses a static list; a future live solution should watch the Roots in Blue Stone Bandsintown artist page / artist ID `15511983`, detect new shows, and update the website through an official API path, scrape-safe watcher, webhook-like polling job, or owner-review workflow. Do not silently publish external event data without a review/rollback path.
 
 ## Interfaces and Dependencies

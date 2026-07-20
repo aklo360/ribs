@@ -16,7 +16,7 @@ slate-indigo + frosted glass + warm amber). All band content is data-driven in
 
 ## Notes
 - `lib/tour.ts` owns the Bandsintown-derived tour list and visible ticket price labels. The reviewed sync automation in `scripts/tour-sync.mjs` and `.github/workflows/bandsintown-sync.yml` uses `BANDSINTOWN_APP_ID` for the official Bandsintown for Artists API when configured, otherwise falls back to the verified Bandsintown V3.1 all-events widget feed; `BANDSINTOWN_EVENTS_URL` is only an override.
-- Booking form emails via Resend to `rootsinbluestone@gmail.com`; needs `RESEND_API_KEY` and a verified `BOOKING_FROM_EMAIL`, and degrades gracefully without either setting. Never commit secrets.
+- Booking form emails via Resend to `sup@rootsinbluestone.com`; needs `RESEND_API_KEY` and a verified `BOOKING_FROM_EMAIL`, and degrades gracefully without either setting. Never commit secrets.
 - Newsletter signup uses the server-side Mailchimp route at `app/api/newsletter/route.ts`; configure `MAILCHIMP_API_KEY` and `MAILCHIMP_AUDIENCE_ID` as Cloudflare Pages secrets, with optional `MAILCHIMP_SERVER_PREFIX`, `MAILCHIMP_SUBSCRIBE_STATUS`, and `MAILCHIMP_TAGS`. `SITE.mailchimpConnectedSiteScript` loads the public Mailchimp connected-site script without replacing the custom UI.
 - Images use `SmartImage` fallback (Wix CDN blocks hotlinking); prefer real assets in `public/`.
 - No production deploy or DNS cutover without explicit approval. Push as `aklo360`.

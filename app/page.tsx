@@ -2,6 +2,7 @@ import { SiteNav } from "@/components/site/nav";
 import { Hero } from "@/components/site/hero";
 import { TourDates } from "@/components/site/tour-dates";
 import { Music } from "@/components/site/music";
+import { Merch } from "@/components/site/merch";
 import { About } from "@/components/site/about";
 import { Gallery } from "@/components/site/gallery";
 import { Video } from "@/components/site/video";
@@ -23,6 +24,7 @@ export default function Home() {
         <Gallery />
         <Video />
         <BookingSection />
+        <Merch />
         <Newsletter />
       </main>
       <Footer />

@@ -71,7 +71,7 @@ export function Footer() {
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.15em] text-foreground/35 transition-colors hover:text-foreground/70"
           >
-            Designed by
+            Built by
             <NewSphereMark />
             NewSphere
           </a>

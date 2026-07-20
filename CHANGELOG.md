@@ -9,6 +9,10 @@
 - Confirmed Cloudflare DNS contains Mailchimp DKIM, Resend DKIM/SPF, DMARC, and Email Routing MX/SPF records without exposing credential values.
 - Confirmed newsletter API signups default to `pending` for Mailchimp double opt-in.
 - Verified the Next.js host redirects locally, including path/query preservation; `npm run lint`, `npm run build`, and `npm run cf:build` passed.
+- Deployed production commit `da35321` to Cloudflare Pages, attached all four custom hostnames, replaced only the legacy Wix/Namecheap web records, and preserved all mail-related DNS records.
+- Purged both Cloudflare zone caches after cutover so stale Wix responses no longer remain. Cloudflare reports all four custom domains active; the apex returns HTTP 200 and the other three return HTTP 308 to the apex with paths and queries preserved.
+- Verified the live booking health endpoint reports Resend and the verified sender configured, without sending an external test email. Live canonical, Open Graph, Twitter image, and invalid-newsletter validation checks passed.
+- Visually verified the official domain in headless Chrome at desktop and an emulated 390x844 mobile viewport. The mobile document has no horizontal overflow, and hero controls remain within the viewport.
 
 ## 2026-07-14 — Booking email delivery guard and quote corrections
 

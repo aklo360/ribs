@@ -28,8 +28,8 @@ function getMailchimpTransactionalKey(): string {
 }
 
 function getBookingEmailProvider(): BookingEmailProvider {
-  if (getMailchimpTransactionalKey()) return "mailchimp-transactional";
   if (process.env.RESEND_API_KEY?.trim()) return "resend";
+  if (getMailchimpTransactionalKey()) return "mailchimp-transactional";
   return "unconfigured";
 }
 
@@ -41,7 +41,8 @@ export async function GET() {
   return NextResponse.json({
     ok: true,
     bookingEmail: SITE.bookingEmail,
-    emailConfigured: (transactionalConfigured && fromConfigured) || resendConfigured,
+    emailConfigured:
+      fromConfigured && (resendConfigured || transactionalConfigured),
     emailProvider: getBookingEmailProvider(),
     transactionalConfigured,
     resendConfigured,
@@ -231,17 +232,17 @@ export async function POST(request: Request) {
     );
   }
 
-  if (provider === "mailchimp-transactional") {
-    if (!configuredFrom) {
-      console.warn("[booking] Mailchimp Transactional sender is not configured");
-      return NextResponse.json(
-        {
-          error: `Booking email sender is not connected yet. Please email ${SITE.bookingEmail} directly.`,
-        },
-        { status: 503 }
-      );
-    }
+  if (!configuredFrom) {
+    console.warn("[booking] Verified sender is not configured");
+    return NextResponse.json(
+      {
+        error: `Booking email sender is not connected yet. Please email ${SITE.bookingEmail} directly.`,
+      },
+      { status: 503 }
+    );
+  }
 
+  if (provider === "mailchimp-transactional") {
     const result = await sendMailchimpTransactionalEmail({
       key: mailchimpTransactionalKey,
       from: configuredFrom,
@@ -273,7 +274,7 @@ export async function POST(request: Request) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: `Roots in Blue Stone <${configuredFrom || "onboarding@resend.dev"}>`,
+      from: `Roots in Blue Stone <${configuredFrom}>`,
       to: [to],
       reply_to: b.email,
       subject,

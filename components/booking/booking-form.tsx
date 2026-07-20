@@ -217,11 +217,15 @@ export function BookingForm() {
 
   async function handleFormSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!isLast) {
-      await next();
+    if (!isLast) await next();
+  }
+
+  async function handlePrimaryAction() {
+    if (isLast) {
+      await handleSubmit(onSubmit)();
       return;
     }
-    await handleSubmit(onSubmit)(event);
+    await next();
   }
 
   async function onSubmit(values: BookingInput) {
@@ -306,8 +310,8 @@ export function BookingForm() {
               className="mt-4 flex w-full items-start gap-3 rounded-md border border-yellow-300/25 bg-yellow-300/[0.08] px-4 py-3 text-yellow-200"
             >
               <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-              <p className="text-xs font-semibold uppercase tracking-normal sm:text-sm">
-                *POTENTIAL CONFLICT, BAND IS BOOKED ON THIS DATE BUT WILL ACCOMMODATE IF POSSIBLE.
+              <p className="text-xs font-semibold tracking-normal sm:text-sm">
+                *Potential conflict, band is booked on this date but will accommodate if possible.
               </p>
             </motion.div>
           )}
@@ -370,25 +374,28 @@ export function BookingForm() {
             Back
           </Button>
 
-          {isLast ? (
-            <Button
-              type="submit"
-              disabled={submitting}
-              className="gap-2 font-semibold glow"
-            >
+          <Button
+            type="button"
+            onClick={handlePrimaryAction}
+            disabled={isLast && submitting}
+            className={cn("gap-2 font-semibold", isLast && "glow")}
+          >
+            {isLast ? (
+              <>
               {submitting ? (
                 <Loader2 className="size-4 animate-spin" />
               ) : (
                 <Send className="size-4" />
               )}
               SUBMIT
-            </Button>
-          ) : (
-            <Button type="button" onClick={next} className="gap-2 font-semibold">
+              </>
+            ) : (
+              <>
               Continue
               <ArrowRight className="size-4" />
-            </Button>
-          )}
+              </>
+            )}
+          </Button>
         </div>
       </form>
     </div>

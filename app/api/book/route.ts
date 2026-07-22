@@ -81,6 +81,7 @@ export async function POST(request: Request) {
           ${row("Power on stage", b.powerAvailable)}
           ${row("Stage notes", b.stageNotes)}
           ${row("Budget", b.budget)}
+          ${row("Live quote estimate", b.quoteEstimate)}
           ${row("Travel/lodging", b.travelLodging)}
           ${row("Heard via", b.heardFrom)}
           ${row("Message", b.message)}
@@ -102,6 +103,7 @@ export async function POST(request: Request) {
       date: b.eventDate,
       lineup: b.lineup,
       budget: b.budget,
+      quoteEstimate: b.quoteEstimate,
     });
     return NextResponse.json({ ok: true, delivered: false });
   }

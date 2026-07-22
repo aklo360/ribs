@@ -109,6 +109,7 @@ export const bookingSchema = z.object({
 
   // Logistics & budget
   budget: z.enum(BUDGET_RANGES).optional(),
+  quoteEstimate: z.string().optional(),
   travelLodging: z.boolean().default(false),
   message: z.string().optional(),
   heardFrom: z.enum(HEARD_OPTIONS).optional(),
@@ -132,6 +133,7 @@ export const bookingDefaults: Partial<BookingInput> = {
   soundEngineerNeeded: false,
   backline: [],
   stageNotes: "",
+  quoteEstimate: "",
   powerAvailable: false,
   travelLodging: false,
   message: "",

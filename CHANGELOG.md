@@ -1,5 +1,12 @@
 # Changelog — Roots in Blue Stone (RIBS)
 
+## 2026-06-24 — Booking quote estimator
+
+- Added a live booking quote estimator to the booking/contact form. The estimate updates from lineup, set length, event type, outdoor setup, PA needs, engineer needs, and travel-review flags.
+- Added `lib/quote.ts` as the single pricing/range configuration surface so Walter's exact quote rules can replace the current conservative defaults without changing form UI.
+- Booking submissions now include the visible quote estimate in the `/api/book` payload and Resend email body/log summary.
+- Verified Walter Lee's newest iMessages are indexed in Mini brain counts/embeddings for June 22-23, but the readable text bodies and iMessage photo attachments are still blocked from this Codex process by macOS Full Disk Access/TCC. No new Walter-sent photos were accessible to add; current project gallery remains the 19 local photos in `public/gallery`.
+
 ## 2026-06-18 — Hero release player evolution
 
 - Removed genre badges from the hero.

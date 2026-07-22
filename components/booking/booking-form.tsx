@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   useForm,
   Controller,
+  useWatch,
   type Control,
   type Resolver,
   type UseFormRegister,
@@ -15,6 +16,7 @@ import { toast } from "sonner";
 import {
   ArrowLeft,
   ArrowRight,
+  Calculator,
   Check,
   Loader2,
   PartyPopper,
@@ -39,6 +41,12 @@ import {
   BUDGET_RANGES,
   HEARD_OPTIONS,
 } from "@/lib/booking-schema";
+import {
+  calculateQuoteEstimate,
+  formatMoney,
+  formatQuoteEstimate,
+  type QuoteEstimate,
+} from "@/lib/quote";
 
 /* ---------- small field primitives ---------- */
 
@@ -150,6 +158,63 @@ function Toggle({
   );
 }
 
+function QuotePreview({ estimate }: { estimate: QuoteEstimate }) {
+  const visibleItems = estimate.items.slice(0, 3);
+
+  return (
+    <div className="mb-7 border-y border-white/10 py-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex items-start gap-3">
+          <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full bg-white/10 text-foreground">
+            <Calculator className="size-4" />
+          </span>
+          <div>
+            <p className="font-display text-sm font-semibold uppercase tracking-normal text-foreground/55">
+              Planning quote
+            </p>
+            <p className="mt-1 text-sm text-foreground/60">
+              Estimate updates as the event details come together.
+            </p>
+          </div>
+        </div>
+        <div className="sm:text-right">
+          <p className="font-display text-3xl font-bold text-foreground">
+            {formatQuoteEstimate(estimate)}
+          </p>
+          <p className="mt-1 text-xs text-foreground/45">
+            Final quote confirmed by the band.
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        {visibleItems.map((item) => (
+          <span
+            key={`${item.label}-${item.amount}`}
+            className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-foreground/60"
+          >
+            {item.label}
+            {item.amount !== 0 && (
+              <span className="ml-1 text-foreground/40">
+                {item.amount > 0 ? "+" : ""}
+                {formatMoney(item.amount)}
+              </span>
+            )}
+          </span>
+        ))}
+        {estimate.needsReview.slice(0, 2).map((item) => (
+          <span
+            key={item}
+            className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-foreground/45"
+          >
+            {item}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /* ---------- steps ---------- */
 
 const STEPS = [
@@ -176,6 +241,11 @@ export function BookingForm() {
     defaultValues: bookingDefaults as BookingInput,
     mode: "onTouched",
   });
+  const quoteFields = useWatch({ control });
+  const estimate = useMemo(
+    () => calculateQuoteEstimate(quoteFields),
+    [quoteFields]
+  );
 
   const total = STEPS.length;
   const isLast = step === total - 1;
@@ -192,7 +262,10 @@ export function BookingForm() {
       const res = await fetch("/api/book", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify({
+          ...values,
+          quoteEstimate: formatQuoteEstimate(calculateQuoteEstimate(values)),
+        }),
       });
       if (!res.ok) throw new Error("Request failed");
       setDone(true);
@@ -244,6 +317,8 @@ export function BookingForm() {
           />
         </div>
       </div>
+
+      <QuotePreview estimate={estimate} />
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         {/* Honeypot */}

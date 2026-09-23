@@ -34,6 +34,7 @@ export const SHOWS: Show[] = [
   { date: "2026-08-29", venue: "Edgewater Beach & Cabana Club", city: "Sea Bright", region: "NJ", note: "RIBS & The Rub", status: "onsale", priceLabel: "Free", ticketUrl: E("108104562") },
   { date: "2026-09-04", venue: "The Warrior Grill", city: "Stroudsburg", region: "PA", status: "onsale", priceLabel: "Free", ticketUrl: E("107806622") },
   { date: "2026-09-05", venue: "Stroudsburg Courthouse Square", city: "Stroudsburg", region: "PA", note: "Stroudfest", status: "onsale", priceLabel: "Free", ticketUrl: E("108561906") },
+  { date: "2026-09-22", venue: "The Shawnee Inn and Golf Resort", city: "Shawnee On Delaware", region: "PA", ticketUrl: E("108694714") },
   { date: "2026-09-25", venue: "Signature Brewery & Saloon", city: "Stroudsburg", region: "PA", note: "RIBS & The Rub", status: "onsale", priceLabel: "Free", ticketUrl: E("108561924") },
   { date: "2026-09-26", venue: "Finola's Irish Pub", city: "Stroudsburg", region: "PA", status: "onsale", priceLabel: "Free", ticketUrl: E("107999247") },
   { date: "2026-11-14", venue: "Jubilee Restaurant", city: "Pocono Pines", region: "PA", status: "onsale", priceLabel: "Free", ticketUrl: E("107481648") },

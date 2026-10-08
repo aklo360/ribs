@@ -132,11 +132,16 @@
   }
   html {
     @apply font-sans;
+    background-color: var(--background, #060606);
+    color-scheme: dark;
+    overscroll-behavior: none;
     scroll-behavior: smooth;
   }
-  body {
+  body,
+  .site-shell {
     @apply bg-background text-foreground antialiased;
     /* Clean black with faint silver pools — no color */
+    background-color: var(--background, #060606);
     background-image: radial-gradient(
         circle at 50% -10%,
         rgba(255, 255, 255, 0.07),
@@ -144,6 +149,11 @@
       ),
       radial-gradient(circle at 85% 8%, rgba(255, 255, 255, 0.03), transparent 42%);
     background-attachment: fixed;
+  }
+  .site-shell {
+    display: flex;
+    min-height: 100svh;
+    flex-direction: column;
   }
   h1, h2, h3, h4, .font-display {
     font-family: var(--font-syne), var(--font-geist-sans), sans-serif;

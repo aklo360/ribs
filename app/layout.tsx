@@ -96,7 +96,7 @@ export default function RootLayout({
       className={`dark ${geistSans.variable} ${geistMono.variable} ${syne.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        {children}
+        <div className="site-shell">{children}</div>
         <Toaster position="top-center" richColors />
         <Script
           id="mcjs"

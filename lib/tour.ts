@@ -36,7 +36,9 @@ export const SHOWS: Show[] = [
   { date: "2026-09-05", venue: "Stroudsburg Courthouse Square", city: "Stroudsburg", region: "PA", note: "Stroudfest", status: "onsale", priceLabel: "Free", ticketUrl: E("108561906") },
   { date: "2026-09-25", venue: "Signature Brewery & Saloon", city: "Stroudsburg", region: "PA", note: "RIBS & The Rub", status: "onsale", priceLabel: "Free", ticketUrl: E("108561924") },
   { date: "2026-09-26", venue: "Finola's Irish Pub", city: "Stroudsburg", region: "PA", status: "onsale", priceLabel: "Free", ticketUrl: E("107999247") },
+  { date: "2026-11-06", venue: "Stage House Tavern- Somerset", city: "Franklin Township", region: "NJ", status: "onsale", priceLabel: "Free", ticketUrl: E("109099732") },
   { date: "2026-11-14", venue: "Jubilee Restaurant", city: "Pocono Pines", region: "PA", status: "onsale", priceLabel: "Free", ticketUrl: E("107481648") },
+  { date: "2026-11-27", venue: "The Warrior Grill", city: "Stroudsburg", region: "PA", status: "onsale", priceLabel: "Free", ticketUrl: E("109099745") },
   { date: "2026-12-19", venue: "Ladder 15", city: "Philadelphia", region: "PA", status: "onsale", priceLabel: "Free", ticketUrl: E("107919913") },
 ];
 
